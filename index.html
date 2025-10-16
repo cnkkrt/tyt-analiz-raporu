@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TYT Okul Sonuç ve Konu Analizi</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); color: #333; line-height: 1.6; margin: 0; padding: 0;}
+.main-container { max-width: 1600px; margin: 20px auto; background: white; border-radius: 20px; box-shadow: 0 15px 60px rgba(227, 10, 23, 0.3), 0 0 40px rgba(255, 196, 0, 0.2); overflow: hidden; border: 3px solid #FFC400; }
+.main-header { background: linear-gradient(135deg, #E30A17 0%, #8B0000 100%); color: white; padding: 40px 40px 30px 40px; text-align: center; position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+.main-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, #FFC400 0%, #FFD700 50%, #FFC400 100%); }
+.main-header h1 { font-size: 2.8em; margin: 0; text-shadow: 3px 3px 6px rgba(0,0,0,0.4); font-weight: 800; letter-spacing: 1px; }
+.main-header p { font-size: 1.3em; opacity: 0.95; margin-top: 10px; font-weight: 500; }
+.main-header .author { font-size: 1em; opacity: 0.9; margin-top: 15px; padding-top: 15px; border-top: 2px solid rgba(255, 196, 0, 0.5); font-style: italic; color: #FFC400; font-weight: 600; }
+.tab-container { display: flex; flex-wrap: wrap; background: linear-gradient(to right, #1a1a1a, #2d2d2d); box-shadow: inset 0 3px 10px rgba(0,0,0,0.5); }
+.tab-button { flex: 1; padding: 18px 10px; cursor: pointer; text-align: center; font-size: 1.1em; font-weight: 700; background: linear-gradient(135deg, #2d2d2d, #1a1a1a); border: none; border-bottom: 4px solid transparent; transition: all 0.4s ease; color: #FFC400; min-width: 120px; text-transform: uppercase; letter-spacing: 0.5px; position: relative; overflow: hidden; }
+.tab-button::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 196, 0, 0.2), transparent); transition: left 0.5s; }
+.tab-button:hover::before { left: 100%; }
+.tab-button.active { background: linear-gradient(135deg, #1a1a1a, #000); border-bottom-color: #FFC400; color: #FFC400; box-shadow: 0 -3px 8px rgba(255, 196, 0, 0.3); }
+.tab-button:hover { background: linear-gradient(135deg, #3d3d3d, #2d2d2d); transform: translateY(-1px); }
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.5s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.container { background: white; }
+.header { background: linear-gradient(135deg, #E30A17 0%, #8B0000 100%); color: white; padding: 30px 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+.header h1 { font-size: 2em; margin-bottom: 5px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+.header p { opacity: 0.95; color: #FFC400; font-weight: 600; }
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 25px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); }
+.summary-card { background: linear-gradient(135deg, white, #fafafa); padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; border-top: 4px solid #E30A17; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.summary-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(227, 10, 23, 0.2); }
+.summary-card h3 { font-size: 1em; color: #1a1a1a; margin-bottom: 8px; text-transform: uppercase; font-weight: 700; }
+.summary-card .value { font-size: 2.8em; font-weight: bold; background: linear-gradient(135deg, #E30A17, #FFC400); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.content { padding: 25px; }
+.section { margin-bottom: 40px; }
+.section-title { font-size: 1.8em; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 3px solid #E30A17; background: linear-gradient(135deg, #E30A17, #FFC400); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 800; }
+.konu-item { background: linear-gradient(135deg, #fff, #fafafa); margin-bottom: 12px; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-left: 4px solid #FFC400; transition: all 0.3s ease; }
+.konu-item:hover { box-shadow: 0 4px 15px rgba(227, 10, 23, 0.15); transform: translateX(5px); }
+.konu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.konu-name { font-size: 0.95em; font-weight: 600; color: #1a1a1a; }
+.konu-percentage { font-size: 1.2em; font-weight: bold; color: #E30A17; }
+.progress-bar { width: 100%; height: 20px; background: linear-gradient(135deg, #e9ecef, #dee2e6); border-radius: 10px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+.progress-fill { height: 100%; transition: width 0.8s ease-out; border-radius: 10px; text-align: center; color: white; font-size: 0.8em; line-height: 20px; position: relative; overflow: hidden; }
+.progress-fill::after { content: ''; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); animation: shimmer 2s infinite; }
+@keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+.critical { background: linear-gradient(135deg, #dc3545, #8B0000); }
+.low { background: linear-gradient(135deg, #fd7e14, #E30A17); }
+.medium { background: linear-gradient(135deg, #FFC400, #FFD700); color: #1a1a1a !important; }
+.good { background: linear-gradient(135deg, #20c997, #17a2b8); }
+.excellent { background: linear-gradient(135deg, #28a745, #20c997); }
+.alert { border-left: 5px solid; padding: 15px; margin: 25px 0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.alert-danger { background: linear-gradient(135deg, #f8d7da, #f5c6cb); border-color: #E30A17; color: #721c24; }
+.alert-success { background: linear-gradient(135deg, #d4edda, #c3e6cb); border-color: #28a745; color: #155724; }
+.alert h4 { margin-top: 0; font-weight: 700; text-shadow: 1px 1px 2px rgba(255,255,255,0.5); }
+.alert ul { padding-left: 20px; margin-bottom: 0; }
+.grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+@media (max-width: 992px) { .grid-container { grid-template-columns: 1fr; } }
+.table-container { overflow-x: auto; border-radius: 10px; box-shadow: 0 5px 20px rgba(227, 10, 23, 0.15); margin-bottom: 40px; border: 2px solid #FFC400; }
+table { width: 100%; border-collapse: collapse; background: #fff; color: #333; }
+thead { background: linear-gradient(135deg, #E30A17, #8B0000); color: #fff; }
+th { padding: 15px; text-align: left; font-weight: bold; font-size: 0.95em; text-transform: uppercase; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+td { padding: 12px 15px; border-bottom: 1px solid #ddd; }
+tbody tr { transition: all 0.2s ease; }
+tbody tr:hover { background: linear-gradient(135deg, #fff9e6, #fffaeb); transform: scale(1.01); }
+tbody tr:nth-child(even) { background: #f8f9fa; }
+.rank-badge { display: inline-block; padding: 5px 10px; border-radius: 20px; font-weight: bold; font-size: 0.9em; color: #fff; text-align: center; min-width: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+.rank-top3 { background: linear-gradient(135deg, #E30A17, #8B0000); }
+.rank-top10 { background: linear-gradient(135deg, #1a1a1a, #000); }
+.rank-other { background: linear-gradient(135deg, #FFC400, #FFD700); color: #1a1a1a; }
+.net-score { font-weight: bold; color: #E30A17; font-size: 1.1em; }
+.success-rate { font-weight: bold; }
+.success-high { color: #28a745; }
+.success-medium { color: #FFC400; }
+.success-low { color: #fd7e14; }
+.success-verylow { color: #E30A17; }
+.pdf-button { 
+            position: fixed; 
+            top: 20px; 
+            right: 20px; 
+            z-index: 1000; 
+            background: linear-gradient(135deg, #E30A17, #FFC400); 
+            color: white; 
+            padding: 15px 30px; 
+            border: none; 
+            border-radius: 50px; 
+            font-size: 1.1em; 
+            font-weight: 700; 
+            cursor: pointer; 
+            box-shadow: 0 8px 20px rgba(227, 10, 23, 0.4); 
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .pdf-button:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 12px 30px rgba(227, 10, 23, 0.6); 
+            background: linear-gradient(135deg, #FF1A2A, #FFD700);
+        }
+        .pdf-button:active {
+            transform: translateY(-1px);
+        }
+        .pdf-button::before {
+            content: '📄 ';
+            font-size: 1.2em;
+        }
+        @media print {
+            .pdf-button { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="main-header"
+        <h1>BOZYAKA ŞEHİT FETHİ BEY ANADOLU LİSESİ</h1>
+        <p>12. Sınıflar AKTİF TYT TG Sınavı - Sonuç ve Konu Analiz Raporu</p>
+	<div class="author">📊 Derleyen: CENK KURT</div>
+    </div>
+
+    <div class="tab-container">
+        <button class="tab-button tab-school active" onclick="openTab(event, 'OkulGeneli')">🏫 OKUL GENELİ</button>
+	<button class="tab-button tab-school" onclick="openTab(event, 'SinifKarsilastirma')">📊 SINIF KARŞILAŞTIRMA</button>
+        <button class="tab-button" onclick="openTab(event, '12A')">12-A</button>
+        <button class="tab-button" onclick="openTab(event, '12B')">12-B</button>
+        <button class="tab-button" onclick="openTab(event, '12C')">12-C</button>
+        <button class="tab-button" onclick="openTab(event, '12D')">12-D</button>
+        <button class="tab-button" onclick="openTab(event, '12E')">12-E</button>
+        <button class="tab-button" onclick="openTab(event, '12F')">12-F</button>
+        <button class="tab-button" onclick="openTab(event, '12G')">12-G</button>
+	<!-- YENİ EKLENEN: Detaylı Rapor Butonu -->
+<button class="tab-button" onclick="openTab(event, 'DetayliRapor')" 
+        style="background: linear-gradient(135deg, #28a745, #20c997); 
+               border-bottom-color: #28a745; 
+               animation: pulse 2s infinite;">
+    📋 DETAYLI RAPOR
+</button>
+    </div>
+
+    <div id="OkulGeneli" class="tab-content active">
+        <div class="container">
+             <div class="header" style="background: linear-gradient(135deg, #0d9488 0%, #2dd4bf 100%);">
+                <h1>📊 Okul Geneli Analizi</h1>
+                <p>102 Öğrencinin Ortalama Başarısı</p>
+            </div>
+            <div class="summary">
+                <div class="summary-card"><h3>Türkçe</h3><div class="value">33.5%</div></div>
+                <div class="summary-card"><h3>Sosyal Bilimler</h3><div class="value">33.5%</div></div>
+                <div class="summary-card"><h3>Temel Matematik</h3><div class="value">4.6%</div></div>
+                <div class="summary-card"><h3>Fen Bilimleri</h3><div class="value">4.0%</div></div>
+            </div>
+            <div class="content">
+                 <div class="alert alert-danger">
+                    <h4>⚠️ OKUL GENELİNDE ACİL DİKKAT GEREKTİREN KONULAR (Başarı < 20%)</h4>
+                    <ul>
+                        <li><b>Matematik & Geometri:</b> Alanın tamamı okul genelinde kritik durumdadır. Başarı yüzdeleri %0 ile %17 arasındadır. Özellikle <b>Problemler (%3.1)</b>, <b>Fonksiyonlar (%2.3)</b>, <b>Mantık (%2.9)</b> gibi konularda acil ve temelden bir çalışma gerekmektedir.</li>
+                        <li><b>Fen Bilimleri:</b> Tüm fen branşlarında genel bir zayıflık göze çarpmaktadır. Özellikle <b>Fizik</b> ve <b>Kimya</b> derslerinin birçok konusunda başarı %10'un altındadır.</li>
+                        <li><b>Türkçe:</b> Cümlenin Ögeleri (%16.7) ve Ekler ve Sözcük Yapısı (%19.6) konularında takviye gerekmektedir.</li>
+                    </ul>
+                </div>
+                <div class="alert alert-success">
+                    <h4>✅ OKUL GENELİNDE GÜÇLÜ KONULAR (Başarı > 50%)</h4>
+                    <ul>
+                        <li><b>Türkçe:</b> Paragraf Yorumu (%54.8)</li>
+                        <li><b>Din Kültürü:</b> Neredeyse tüm konular okul genelinde başarılıdır (%52 - %68 arası).</li>
+                         <li><b>Tarih:</b> Dünya Gücü Osmanlı (%56.1)</li>
+                    </ul>
+                </div>
+                <div class="grid-container">
+                    <div class="section">
+                        <h2 class="section-title">📝 TÜRKÇE (Okul Ortalaması)</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Paragraf Yorumu</div><div class="konu-percentage">54.8%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 54.8%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Cümlenin Anlamı ve Yorumu</div><div class="konu-percentage">48.3%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 48.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Paragrafın Yapısı</div><div class="konu-percentage">44.0%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 44.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Noktalama İşaretleri</div><div class="konu-percentage">42.8%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 42.8%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Yazım Kuralları</div><div class="konu-percentage">35.6%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 35.6%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Anlatım Teknikleri</div><div class="konu-percentage">33.5%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 33.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Sözcükte ve Söz Öbeklerinde Anlam</div><div class="konu-percentage">30.3%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 30.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fiilimsiler</div><div class="konu-percentage">23.9%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 23.9%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Ekler ve Sözcük Yapısı</div><div class="konu-percentage">19.6%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 19.6%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Cümlenin Ögeleri</div><div class="konu-percentage">16.7%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 16.7%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🌍 SOSYAL BİLİMLER (Okul Ortalaması)</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Güncel Dini Meseleler</div><div class="konu-percentage">68.1%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 68.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Dünya ve Ahiret</div><div class="konu-percentage">66.0%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 66.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - İslam ve Bilim</div><div class="konu-percentage">65.7%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 65.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - İslam ve İbadet</div><div class="konu-percentage">60.9%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 60.9%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Bilgi ve İnanç</div><div class="konu-percentage">52.7%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 52.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Dünya Gücü Osmanlı</div><div class="konu-percentage">56.1%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 56.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - İlk ve Orta Çağlarda Türk Dünyası</div><div class="konu-percentage">45.0%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 45.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Atatürkçülük ve Türk İnkılabı</div><div class="konu-percentage">40.4%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 40.4%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Felsefe - 15-17. Yüzyıl Felsefesi</div><div class="konu-percentage">38.4%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 38.4%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Milli Mücadele</div><div class="konu-percentage">35.0%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 35.0%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🔢 TEMEL MATEMATİK (Okul Ortalaması)</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kümeler</div><div class="konu-percentage">17.1%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 17.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Birinci Dereceden Denklemler</div><div class="konu-percentage">13.2%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 13.2%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Sayılar</div><div class="konu-percentage">8.9%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 8.9%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Üslü ve Köklü İfadeler</div><div class="konu-percentage">8.8%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 8.8%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Mutlak Değer</div><div class="konu-percentage">7.8%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 7.8%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Özel Üçgenler</div><div class="konu-percentage">4.9%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 4.9%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Problemler</div><div class="konu-percentage">3.1%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 3.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Mantık</div><div class="konu-percentage">2.9%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 2.9%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fonksiyonlar</div><div class="konu-percentage">2.3%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 2.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Bölünebilme ve EBOB-EKOK</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🔬 FEN BİLİMLERİ (Okul Ortalaması)</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Ekosistem Ekolojisi</div><div class="konu-percentage">9.3%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 9.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Kimya Bilimi</div><div class="konu-percentage">8.1%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 8.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Kalıtımın Genel İlkeleri</div><div class="konu-percentage">7.8%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 7.8%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Basınç ve Kaldırma Kuvveti</div><div class="konu-percentage">7.6%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 7.6%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Hareket ve Kuvvet</div><div class="konu-percentage">6.9%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 6.9%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Hücre Bölünmeleri</div><div class="konu-percentage">5.9%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 5.9%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Atom ve Periyodik Sistem</div><div class="konu-percentage">5.4%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 5.4%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name"
+>Fizik - Isı ve Sıcaklık</div><div class="konu-percentage">4.9%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 4.9%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Hücre</div><div class="konu-percentage">3.9%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 3.9%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Optik</div><div class="konu-percentage">2.7%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 2.7%"></div></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+	<div id="SinifKarsilastirma" class="tab-content">
+        <div class="container">
+            <div class="header">
+                <h1>📊 Sınıflar Arası Karşılaştırma Analizi</h1>
+                <p>Tüm Sınıfların Ders Ortalamaları Karşılaştırması</p>
+            </div>
+            <div class="content">
+                
+                <!-- TÜRKÇE KARŞILAŞTIRMA -->
+                <div class="section">
+                    <h2 class="section-title">📚 Türkçe Dersi - Sınıf Ortalamaları</h2>
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">🏆 12-G</span><span style="font-weight: bold; color: #E30A17;">41.1%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 41.1%; height: 100%; background: linear-gradient(135deg, #E30A17, #FFC400); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-A</span><span style="font-weight: bold; color: #E30A17;">38.7%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 38.7%; height: 100%; background: linear-gradient(135deg, #FFC400, #FFD700); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-C</span><span style="font-weight: bold; color: #E30A17;">38.4%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 38.4%; height: 100%; background: linear-gradient(135deg, #FFC400, #FFD700); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-D</span><span style="font-weight: bold; color: #E30A17;">33.5%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 33.5%; height: 100%; background: linear-gradient(135deg, #20c997, #17a2b8); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-F</span><span style="font-weight: bold; color: #E30A17;">33.5%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 33.5%; height: 100%; background: linear-gradient(135deg, #20c997, #17a2b8); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-E</span><span style="font-weight: bold; color: #E30A17;">33.4%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 33.4%; height: 100%; background: linear-gradient(135deg, #20c997, #17a2b8); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">⚠️ 12-B</span><span style="font-weight: bold; color: #E30A17;">28.3%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 28.3%; height: 100%; background: linear-gradient(135deg, #fd7e14, #E30A17); border-radius: 15px;"></div></div></div>
+                    </div>
+                </div>
+
+                <!-- SOSYAL BİLİMLER KARŞILAŞTIRMA -->
+                <div class="section">
+                    <h2 class="section-title">🌍 Sosyal Bilimler Dersi - Sınıf Ortalamaları</h2>
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">🏆 12-G</span><span style="font-weight: bold; color: #E30A17;">41.5%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 41.5%; height: 100%; background: linear-gradient(135deg, #E30A17, #FFC400); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-A</span><span style="font-weight: bold; color: #E30A17;">36.2%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 36.2%; height: 100%; background: linear-gradient(135deg, #FFC400, #FFD700); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-C</span><span style="font-weight: bold; color: #E30A17;">35.8%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 35.8%; height: 100%; background: linear-gradient(135deg, #FFC400, #FFD700); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-E</span><span style="font-weight: bold; color: #E30A17;">33.9%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 33.9%; height: 100%; background: linear-gradient(135deg, #20c997, #17a2b8); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-D</span><span style="font-weight: bold; color: #E30A17;">32.0%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 32.0%; height: 100%; background: linear-gradient(135deg, #20c997, #17a2b8); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-B</span><span style="font-weight: bold; color: #E30A17;">28.5%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 28.5%; height: 100%; background: linear-gradient(135deg, #fd7e14, #dc3545); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">⚠️ 12-F</span><span style="font-weight: bold; color: #E30A17;">27.3%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 27.3%; height: 100%; background: linear-gradient(135deg, #fd7e14, #E30A17); border-radius: 15px;"></div></div></div>
+                    </div>
+                </div>
+
+                <!-- MATEMATİK KARŞILAŞTIRMA -->
+                <div class="section">
+                    <h2 class="section-title">🔢 Temel Matematik - Sınıf Ortalamaları</h2>
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">🏆 12-C</span><span style="font-weight: bold; color: #E30A17;">6.0%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 6.0%; height: 100%; background: linear-gradient(135deg, #fd7e14, #dc3545); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-G</span><span style="font-weight: bold; color: #E30A17;">5.3%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 5.3%; height: 100%; background: linear-gradient(135deg, #dc3545, #8B0000); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-A</span><span style="font-weight: bold; color: #E30A17;">4.9%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 4.9%; height: 100%; background: linear-gradient(135deg, #dc3545, #8B0000); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-D</span><span style="font-weight: bold; color: #E30A17;">4.4%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 4.4%; height: 100%; background: linear-gradient(135deg, #dc3545, #8B0000); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-E</span><span style="font-weight: bold; color: #E30A17;">3.8%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 3.8%; height: 100%; background: linear-gradient(135deg, #dc3545, #8B0000); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-F</span><span style="font-weight: bold; color: #E30A17;">3.5%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 3.5%; height: 100%; background: linear-gradient(135deg, #dc3545, #8B0000); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">⚠️ 12-B</span><span style="font-weight: bold; color: #E30A17;">1.8%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 1.8%; height: 100%; background: linear-gradient(135deg, #dc3545, #8B0000); border-radius: 15px;"></div></div></div>
+                    </div>
+                </div>
+
+                <!-- FEN BİLİMLERİ KARŞILAŞTIRMA -->
+                <div class="section">
+                    <h2 class="section-title">🔬 Fen Bilimleri - Sınıf Ortalamaları</h2>
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">🏆 12-A</span><span style="font-weight: bold; color: #E30A17;">6.0%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 6.0%; height: 100%; background: linear-gradient(135deg, #fd7e14, #dc3545); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-C</span><span style="font-weight: bold; color: #E30A17;">4.8%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 4.8%; height: 100%; background: linear-gradient(135deg, #dc3545, #8B0000); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-G</span><span style="font-weight: bold; color: #E30A17;">4.5%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 4.5%; height: 100%; background: linear-gradient(135deg, #dc3545, #8B0000); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-D</span><span style="font-weight: bold; color: #E30A17;">3.9%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 3.9%; height: 100%; background: linear-gradient(135deg, #dc3545, #8B0000); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-E</span><span style="font-weight: bold; color: #E30A17;">3.4%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 3.4%; height: 100%; background: linear-gradient(135deg, #dc3545, #8B0000); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">12-F</span><span style="font-weight: bold; color: #E30A17;">2.8%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 2.8%; height: 100%; background: linear-gradient(135deg, #dc3545, #8B0000); border-radius: 15px;"></div></div></div>
+                        <div style="margin-bottom: 15px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span style="font-weight: 600; color: #1a1a1a;">⚠️ 12-B</span><span style="font-weight: bold; color: #E30A17;">1.9%</span></div><div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden;"><div style="width: 1.9%; height: 100%; background: linear-gradient(135deg, #dc3545, #8B0000); border-radius: 15px;"></div></div></div>
+                    </div>
+                </div>
+
+                <!-- ÖZET KARTI -->
+                <div class="alert alert-success" style="margin-top: 40px;">
+                    <h4>🏆 Sınıf Performans Özeti</h4>
+                    <ul>
+                        <li><b>En Başarılı Sınıf (Türkçe):</b> 12-G (41.1%)</li>
+                        <li><b>En Başarılı Sınıf (Sosyal Bilimler):</b> 12-G (41.5%)</li>
+                        <li><b>En Başarılı Sınıf (Matematik):</b> 12-C (6.0%)</li>
+                        <li><b>En Başarılı Sınıf (Fen Bilimleri):</b> 12-A (6.0%)</li>
+                    </ul>
+                </div>
+
+                <div class="alert alert-danger">
+                    <h4>⚠️ Dikkat Gereken Sınıflar</h4>
+                    <ul>
+                        <li><b>Matematik:</b> Tüm sınıflar kritik seviyede (%1.8 - %6.0 arası)</li>
+                        <li><b>Fen Bilimleri:</b> Tüm sınıflar kritik seviyede (%1.9 - %6.0 arası)</li>
+                        <li><b>Türkçe en düşük:</b> 12-B (%28.3)</li>
+                        <li><b>Sosyal Bilimler en düşük:</b> 12-F (%27.3)</li>
+                        <li><b>Matematik en düşük:</b> 12-B (%1.8)</li>
+                        <li><b>Fen Bilimleri en düşük:</b> 12-B (%1.9)</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div id="12A" class="tab-content">
+        <div class="container">
+             <div class="header"><h1>12-A Sınıf Analizi</h1><p>20 Öğrencinin Sonuçları</p></div>
+            <div class="summary">
+                <div class="summary-card"><h3>Türkçe</h3><div class="value">38.7%</div></div>
+                <div class="summary-card"><h3>Sosyal Bilimler</h3><div class="value">37.1%</div></div>
+                <div class="summary-card"><h3>Temel Matematik</h3><div class="value">4.0%</div></div>
+                <div class="summary-card"><h3>Fen Bilimleri</h3><div class="value">6.0%</div></div>
+            </div>
+            <div class="content">
+                <div class="section">
+                    <h2 class="section-title">Sınıf Sonuç Listesi</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Sıra</th>
+                                    <th>Öğrenci Adı</th>
+                                    <th>Doğru</th>
+                                    <th>Yanlış</th>
+                                    <th>Boş</th>
+                                    <th>Net</th>
+                                    <th>Genel Sıralama</th>
+                                    <th>Başarı %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><span class="rank-badge rank-top3">1</span></td><td>EZEL ALA</td><td>48</td><td>16</td><td>56</td><td class="net-score">44,00</td><td>32.205</td><td class="success-rate success-high">%49,42</td></tr>
+                                <tr><td><span class="rank-badge rank-top3">2</span></td><td>MERVE KILIÇ</td><td>41</td><td>14</td><td>65</td><td class="net-score">37,50</td><td>40.189</td><td class="success-rate success-high">%61,67</td></tr>
+                                <tr><td><span class="rank-badge rank-top3">3</span></td><td>TAHA KAYRA KAYA</td><td>43</td><td>38</td><td>39</td><td class="net-score">33,50</td><td>44.173</td><td class="success-rate success-medium">%67,78</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">4</span></td><td>ELİF BOZLAK</td><td>37</td><td>19</td><td>64</td><td class="net-score">32,25</td><td>45.478</td><td class="success-rate success-medium">%69,79</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">5</span></td><td>FATİH ÜLKER</td><td>42</td><td>40</td><td>38</td><td class="net-score">32,00</td><td>45.973</td><td class="success-rate success-medium">%70,55</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">6</span></td><td>ALEYNA SALMAN</td><td>34</td><td>14</td><td>72</td><td class="net-score">30,50</td><td>47.285</td><td class="success-rate success-medium">%72,56</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">7</span></td><td>HATİCE ALTINTAŞ</td><td>33</td><td>10</td><td>77</td><td class="net-score">30,50</td><td>47.569</td><td class="success-rate success-medium">%73,00</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">8</span></td><td>BAŞAK GÖKÇE</td><td>36</td><td>32</td><td>52</td><td class="net-score">28,00</td><td>50.094</td><td class="success-rate success-low">%76,87</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">9</span></td><td>ECE ULUSAL</td><td>35</td><td>30</td><td>55</td><td class="net-score">27,50</td><td>50.582</td><td class="success-rate success-low">%77,62</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">10</span></td><td>EYLÜL NİSA BABAYİĞİT</td><td>30</td><td>27</td><td>63</td><td class="net-score">23,25</td><td>53.861</td><td class="success-rate success-low">%82,65</td></tr>
+                                <tr><td><span class="rank-badge rank-other">11</span></td><td>HİRA KAYA</td><td>29</td><td>28</td><td>63</td><td class="net-score">22,00</td><td>54.941</td><td class="success-rate success-low">%84,31</td></tr>
+                                <tr><td><span class="rank-badge rank-other">12</span></td><td>M EMİN SALDANLI</td><td>32</td><td>42</td><td>46</td><td class="net-score">21,50</td><td>55.020</td><td class="success-rate success-low">%84,43</td></tr>
+                                <tr><td><span class="rank-badge rank-other">13</span></td><td>HİLAL COŞKUN</td><td>27</td><td>23</td><td>70</td><td class="net-score">21,25</td><td>55.339</td><td class="success-rate success-low">%84,92</td></tr>
+                                <tr><td><span class="rank-badge rank-other">14</span></td><td>ELA DENİZ</td><td>25</td><td>21</td><td>74</td><td class="net-score">19,75</td><td>56.498</td><td class="success-rate success-low">%86,70</td></tr>
+                                <tr><td><span class="rank-badge rank-other">15</span></td><td>ALPEREN EMİR DEV</td><td>28</td><td>44</td><td>48</td><td class="net-score">17,00</td><td>58.107</td><td class="success-rate success-verylow">%89,17</td></tr>
+                                <tr><td><span class="rank-badge rank-other">16</span></td><td>MELEK TAN</td><td>27</td><td>42</td><td>51</td><td class="net-score">16,50</td><td>58.229</td><td class="success-rate success-verylow">%89,35</td></tr>
+                                <tr><td><span class="rank-badge rank-other">17</span></td><td>NARİN AKTAŞ</td><td>19</td><td>15</td><td>86</td><td class="net-score">15,25</td><td>59.121</td><td class="success-rate success-verylow">%90,72</td></tr>
+                                <tr><td><span class="rank-badge rank-other">18</span></td><td>ESMA TOPAÇ</td><td>26</td><td>45</td><td>49</td><td class="net-score">14,75</td><td>59.401</td><td class="success-rate success-verylow">%91,15</td></tr>
+                                <tr><td><span class="rank-badge rank-other">19</span></td><td>HİLAL NUR AKÇA</td><td>23</td><td>44</td><td>53</td><td class="net-score">12,00</td><td>60.711</td><td class="success-rate success-verylow">%93,16</td></tr>
+                                <tr><td><span class="rank-badge rank-other">20</span></td><td>KAPİBARAYEŞİLSULUFAT</td><td>0</td><td>0</td><td>120</td><td class="net-score">0,00</td><td>64.360</td><td class="success-rate success-verylow">%98,76</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="alert alert-danger">
+                    <h4>⚠️ ACİL DİKKAT GEREKTİREN KONULAR (Başarı < 25%)</h4>
+                    <ul>
+                        <li><b>Matematik:</b> Sayılar (%14), Rasyonel Sayılar (%7), Problemler (%5), Mantık (%0), Fonksiyonlar (%0), Bölünebilme (%0), Permütasyon-Kombinasyon (%0), Olasılık (%0)</li>
+                        <li><b>Geometri:</b> Tüm konular (%0 - %8 arası)</li>
+                        <li><b>Fizik & Kimya:</b> Neredeyse tüm konular (%0 - %15 arası)</li>
+                        <li><b>Türkçe:</b> Cümlenin Ögeleri (%13), Yazım Kuralları (%20)</li>
+                    </ul>
+                </div>
+                <div class="alert alert-success">
+                    <h4>✅ GÜÇLÜ KONULAR (Başarı > 60%)</h4>
+                    <ul>
+                        <li><b>Türkçe:</b> Paragraf Yorumu (%62)</li>
+                        <li><b>Din Kültürü:</b> Tüm konular (%60 - %73 arası)</li>
+                        <li><b>Tarih:</b> Dünya Gücü Osmanlı (%67)</li>
+                    </ul>
+                </div>
+                <div class="grid-container">
+                    <div class="section">
+                        <h2 class="section-title">📝 TÜRKÇE</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Paragraf Yorumu</div><div class="konu-percentage">62.0%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 62.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Paragrafın Yapısı</div><div class="konu-percentage">54.2%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 54.2%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Cümlenin Anlamı ve Yorumu</div><div class="konu-percentage">51.2%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 51.2%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Anlatım Teknikleri</div><div class="konu-percentage">40.0%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 40.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Noktalama İşaretleri</div><div class="konu-percentage">30.0%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 30.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Sözcükte ve Söz Öbeklerinde Anlam</div><div class="konu-percentage">26.7%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 26.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fiilimsiler</div><div class="konu-percentage">20.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 20.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Yazım Kuralları</div><div class="konu-percentage">20.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 20.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Ekler ve Sözcük Yapısı</div><div class="konu-percentage">20.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 20.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Cümlenin Ögeleri</div><div class="konu-percentage">13.3%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 13.3%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🌍 SOSYAL BİLİMLER</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Dünya ve Ahiret</div><div class="konu-percentage">73.3%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 73.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - İslam ve İbadet</div><div class="konu-percentage">66.7%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 66.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Dünya Gücü Osmanlı (1453-1595)</div><div class="konu-percentage">66.7%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 66.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Güncel Dini Meseleler</div><div class="konu-percentage">60.0%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 60.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - İlk ve Orta Çağlarda Türk Dünyası</div><div class="konu-percentage">53.3%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 53.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Coğrafya - Beşeri Sistemler</div><div class="konu-percentage">46.7%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 46.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Bilgi ve İnanç</div><div class="konu-percentage">40.0%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 40.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Coğrafya - Doğal Sistemler</div><div class="konu-percentage">36.7%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 36.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Türklerin İslamiyeti Kabulü</div><div class="konu-percentage">33.3%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 33.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Felsefe - 15-17. Yüzyıl Felsefesi</div><div class="konu-percentage">33.3%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 33.3%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🔢 TEMEL MATEMATİK</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kümeler</div><div class="konu-percentage">40.0%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 40.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Sayılar</div><div class="konu-percentage">14.3%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 14.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Üslü ve Köklü İfadeler</div><div class="konu-percentage">13.3%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 13.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Özel Üçgenler</div><div class="konu-percentage">6.7%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 6.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Problemler</div><div class="konu-percentage">5.5%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 5.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Mutlak Değer</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Mantık</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fonksiyonlar</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Bölünebilme ve EBOB-EKOK</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Olasılık</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🔬 FEN BİLİMLERİ</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Atom ve Periyodik Sistem</div><div class="konu-percentage">26.7%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 26.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Kalıtımın Genel İlkeleri</div><div class="konu-percentage">20.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 20.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Hareket ve Kuvvet</div><div class="konu-percentage">13.3%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 13.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Kimya Bilimi</div><div class="konu-percentage">13.3%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 13.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Ekosistem Ekolojisi</div><div class="konu-percentage">13.3%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 13.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Basınç ve Kaldırma Kuvveti</div><div class="konu-percentage">6.7%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 6.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Kimyasal Türler Arası Etkileşimler</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Hücre</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Canlılar Dünyası</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="12B" class="tab-content">
+       <div class="container">
+            <div class="header"><h1>12-B Sınıf Analizi</h1><p>14 Öğrencinin Sonuçları</p></div>
+            <div class="summary">
+                <div class="summary-card"><h3>Türkçe</h3><div class="value">28.3%</div></div>
+                <div class="summary-card"><h3>Sosyal Bilimler</h3><div class="value">29.6%</div></div>
+                <div class="summary-card"><h3>Temel Matematik</h3><div class="value">3.9%</div></div>
+                <div class="summary-card"><h3>Fen Bilimleri</h3><div class="value">4.9%</div></div>
+            </div>
+             <div class="content">
+                <div class="section">
+                    <h2 class="section-title">Sınıf Sonuç Listesi</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Sıra</th>
+                                    <th>Öğrenci Adı</th>
+                                    <th>Doğru</th>
+                                    <th>Yanlış</th>
+                                    <th>Boş</th>
+                                    <th>Net</th>
+                                    <th>Genel Sıralama</th>
+                                    <th>Başarı %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><span class="rank-badge rank-top3">1</span></td><td>NEHİR KAYA</td><td>42</td><td>20</td><td>58</td><td class="net-score">37,00</td><td>40.655</td><td class="success-rate success-high">%62,39</td></tr>
+                                <tr><td><span class="rank-badge rank-top3">2</span></td><td>BURAK GENÇ</td><td>38</td><td>31</td><td>51</td><td class="net-score">30,25</td><td>47.730</td><td class="success-rate success-medium">%73,24</td></tr>
+                                <tr><td><span class="rank-badge rank-top3">3</span></td><td>HANIM YAVUZ</td><td>32</td><td>11</td><td>77</td><td class="net-score">29,25</td><td>48.711</td><td class="success-rate success-medium">%74,75</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">4</span></td><td>SELİN BİLGİN</td><td>35</td><td>28</td><td>57</td><td class="net-score">28,00</td><td>49.812</td><td class="success-rate success-low">%76,44</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">5</span></td><td>SÜMEYYE ORAL</td><td>35</td><td>37</td><td>48</td><td class="net-score">25,75</td><td>51.986</td><td class="success-rate success-low">%79,77</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">6</span></td><td>AİŞE KASIM</td><td>31</td><td>34</td><td>55</td><td class="net-score">22,50</td><td>54.556</td><td class="success-rate success-low">%83,72</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">7</span></td><td>SÜMEYYE UYSAL</td><td>35</td><td>27</td><td>58</td><td class="net-score">28,25</td><td>49.842</td><td class="success-rate success-low">%76,48</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">8</span></td><td>HELİN * V*L AYDIN</td><td>24</td><td>20</td><td>76</td><td class="net-score">19,00</td><td>56.928</td><td class="success-rate success-low">%87,36</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">9</span></td><td>CİVAN YILMAZ</td><td>24</td><td>25</td><td>71</td><td class="net-score">17,75</td><td>57.594</td><td class="success-rate success-verylow">%88,38</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">10</span></td><td>SİDRA HORO</td><td>20</td><td>29</td><td>71</td><td class="net-score">12,75</td><td>60.381</td><td class="success-rate success-verylow">%92,66</td></tr>
+                                <tr><td><span class="rank-badge rank-other">11</span></td><td>EFE KAYA</td><td>14</td><td>28</td><td>78</td><td class="net-score">7,00</td><td>62.493</td><td class="success-rate success-verylow">%95,90</td></tr>
+                                <tr><td><span class="rank-badge rank-other">12</span></td><td>BÜŞRA HA N*L</td><td>13</td><td>25</td><td>82</td><td class="net-score">6,75</td><td>62.500</td><td class="success-rate success-verylow">%95,91</td></tr>
+                                <tr><td><span class="rank-badge rank-other">13</span></td><td>FATMA NUR ÇETİNKAYA</td><td>13</td><td>32</td><td>75</td><td class="net-score">5,00</td><td>63.054</td><td class="success-rate success-verylow">%96,76</td></tr>
+                                <tr><td><span class="rank-badge rank-other">14</span></td><td>REND ZAID</td><td>10</td><td>46</td><td>64</td><td class="net-score">-1,50</td><td>64.279</td><td class="success-rate success-verylow">%98,64</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="alert alert-danger">
+                    <h4>⚠️ ACİL DİKKAT GEREKTİREN KONULAR (Başarı < 25%)</h4>
+                    <ul>
+                        <li><b>Matematik & Geometri:</b> Alanın tamamı kritik durumda. Fonksiyonlar, Mantık, Bölünebilme gibi 7 konuda başarı %0. Problemler %2.</li>
+                        <li><b>Fen Bilimleri:</b> Alanın tamamı kritik durumda. Birçok konuda başarı %0. En yüksek başarı %21 ile Fizik - Basınç ve Kaldırma Kuvveti.</li>
+                        <li><b>Türkçe:</b> Paragraf Yorumu (%40) dışındaki tüm dil bilgisi ve anlam konuları. Cümlenin Ögeleri (%0).</li>
+                        <li><b>Sosyal Bilimler:</b> Coğrafya ve Felsefe konularında genel bir zayıflık mevcut.</li>
+                    </ul>
+                </div>
+                <div class="alert alert-success">
+                    <h4>✅ GÜÇLÜ KONULAR (Başarı > 50%)</h4>
+                    <ul>
+                         <li><b>Tarih:</b> Dünya Gücü Osmanlı (%79), İlk ve Orta Çağlarda Türk Dünyası (%57)</li>
+                         <li><b>Coğrafya:</b> Beşeri Sistemler (%71)</li>
+                         <li><b>Din Kültürü:</b> İslam ve Bilim (%57), İslam ve İbadet (%57)</li>
+                    </ul>
+                </div>
+                <div class="grid-container">
+                    <div class="section">
+                        <h2 class="section-title">📝 TÜRKÇE</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Paragraf Yorumu</div><div class="konu-percentage">40.1%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 40.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Paragrafın Yapısı</div><div class="konu-percentage">37.5%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 37.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Noktalama İşaretleri</div><div class="konu-percentage">35.7%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 35.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Yazım Kuralları</div><div class="konu-percentage">35.7%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 35.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Cümlenin Anlamı ve Yorumu</div><div class="konu-percentage">31.0%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 31.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Sözcükte ve Söz Öbeklerinde Anlam</div><div class="konu-percentage">28.6%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 28.6%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Anlatım Teknikleri</div><div class="konu-percentage">28.6%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 28.6%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fiilimsiler</div><div class="konu-percentage">7.1%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 7.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Ekler ve Sözcük Yapısı</div><div class="konu-percentage">7.1%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 7.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Cümlenin Ögeleri</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🌍 SOSYAL BİLİMLER</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Dünya Gücü Osmanlı</div><div class="konu-percentage">78.6%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 78.6%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Coğrafya - Beşeri Sistemler</div><div class="konu-percentage">71.4%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 71.4%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - İlk ve Orta Çağlarda Türk Dünyası</div><div class="konu-percentage">57.1%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 57.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - İslam ve Bilim</div><div class="konu-percentage">57.1%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 57.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - İslam ve İbadet</div><div class="konu-percentage">57.1%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 57.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Dünya ve Ahiret</div><div class="konu-percentage">50.0%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 50.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Güncel Dini Meseleler</div><div class="konu-percentage">50.0%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 50.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Milli Mücadele</div><div class="konu-percentage">28.6%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 28.6%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Felsefe - Felsefenin Temel Konuları</div><div class="konu-percentage">25.0%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 25.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Türklerin İslamiyeti Kabulü</div><div class="konu-percentage">21.4%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 21.4%"></div></div></div>
+                    </div>
+                     <div class="section">
+                        <h2 class="section-title">🔢 TEMEL MATEMATİK</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kümeler</div><div class="konu-percentage">21.4%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 21.4%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Sayılar</div><div class="konu-percentage">10.7%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 10.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Geometri - Çokgenler ve Dörtgenler</div><div class="konu-percentage">7.1%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 7.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Geometri - Özel Üçgenler</div><div class="konu-percentage">7.1%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 7.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Birinci Dereceden Denklemler</div><div class="konu-percentage">7.1%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 7.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Problemler</div><div class="konu-percentage">1.9%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 1.9%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Mantık</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fonksiyonlar</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Bölünebilme ve EBOB-EKOK</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Olasılık</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                    </div>
+                     <div class="section">
+                        <h2 class="section-title">🔬 FEN BİLİMLERİ</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Basınç ve Kaldırma Kuvveti</div><div class="konu-percentage">21.4%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 21.4%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Ekosistem Ekolojisi</div><div class="konu-percentage">14.3%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 14.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Hareket ve Kuvvet</div><div class="konu-percentage">10.7%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 10.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Kalıtımın Genel İlkeleri</div><div class="konu-percentage">14.3%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 14.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Hücre Bölünmeleri</div><div class="konu-percentage">7.1%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 7.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Kimya Bilimi</div><div class="konu-percentage">7.1%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 7.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Maddenin Halleri</div><div class="konu-percentage">7.1%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 7.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Elektrostatik</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Optik</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Atom ve Periyodik Sistem</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="12C" class="tab-content">
+        <div class="container">
+            <div class="header"><h1>12-C Sınıf Analizi</h1><p>20 Öğrencinin Sonuçları</p></div>
+            <div class="summary">
+                <div class="summary-card"><h3>Türkçe</h3><div class="value">38.4%</div></div>
+                <div class="summary-card"><h3>Sosyal Bilimler</h3><div class="value">38.0%</div></div>
+                <div class="summary-card"><h3>Temel Matematik</h3><div class="value">6.0%</div></div>
+                <div class="summary-card"><h3>Fen Bilimleri</h3><div class="value">4.1%</div></div>
+            </div>
+            <div class="content">
+                <div class="section">
+                    <h2 class="section-title">Sınıf Sonuç Listesi</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Sıra</th>
+                                    <th>Öğrenci Adı</th>
+                                    <th>Doğru</th>
+                                    <th>Yanlış</th>
+                                    <th>Boş</th>
+                                    <th>Net</th>
+                                    <th>Genel Sıralama</th>
+                                    <th>Başarı %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><span class="rank-badge rank-top3">1</span></td><td>GÜLAY TURAN</td><td>45</td><td>20</td><td>55</td><td class="net-score">40,00</td><td>37.487</td><td class="success-rate success-high">%57,52</td></tr>
+                                <tr><td><span class="rank-badge rank-top3">2</span></td><td>SILA KAÇAR</td><td>44</td><td>25</td><td>51</td><td class="net-score">37,75</td><td>39.831</td><td class="success-rate success-high">%61,12</td></tr>
+                                <tr><td><span class="rank-badge rank-top3">3</span></td><td>RABİA AKŞİT</td><td>42</td><td>20</td><td>58</td><td class="net-score">37,00</td><td>40.776</td><td class="success-rate success-high">%62,57</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">4</span></td><td>ABDULLAH GÜLDAL</td><td>43</td><td>27</td><td>50</td><td class="net-score">36,25</td><td>41.451</td><td class="success-rate success-high">%63,61</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">5</span></td><td>ZEYNEP AYDEMİR</td><td>41</td><td>22</td><td>57</td><td class="net-score">35,50</td><td>42.350</td><td class="success-rate success-high">%64,99</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">6</span></td><td>NİSA GÜNEŞ</td><td>46</td><td>49</td><td>25</td><td class="net-score">33,75</td><td>44.206</td><td class="success-rate success-medium">%67,83</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">7</span></td><td>GÜLFİDAN KARABAK</td><td>38</td><td>30</td><td>52</td><td class="net-score">30,50</td><td>47.588</td><td class="success-rate success-medium">%73,02</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">8</span></td><td>YAĞMUR AYGÜN</td><td>35</td><td>20</td><td>65</td><td class="net-score">30,00</td><td>48.100</td><td class="success-rate success-medium">%73,81</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">9</span></td><td>AZRA NUR UZUNAY</td><td>34</td><td>22</td><td>64</td><td class="net-score">28,50</td><td>49.579</td><td class="success-rate success-low">%76,08</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">10</span></td><td>EDA VOLKAN</td><td>38</td><td>40</td><td>42</td><td class="net-score">28,00</td><td>49.975</td><td class="success-rate success-low">%76,69</td></tr>
+                                <tr><td><span class="rank-badge rank-other">11</span></td><td>SAİT AYDEMİR</td><td>33</td><td>28</td><td>59</td><td class="net-score">26,00</td><td>51.854</td><td class="success-rate success-low">%79,57</td></tr>
+                                <tr><td><span class="rank-badge rank-other">12</span></td><td>KAMİLE NUR ASLAN</td><td>27</td><td>15</td><td>78</td><td class="net-score">23,25</td><td>54.002</td><td class="success-rate success-low">%82,87</td></tr>
+                                <tr><td><span class="rank-badge rank-other">13</span></td><td>ALEYNA TOĞLUK</td><td>37</td><td>58</td><td>25</td><td class="net-score">22,50</td><td>54.269</td><td class="success-rate success-low">%83,28</td></tr>
+                                <tr><td><span class="rank-badge rank-other">14</span></td><td>YUSUF ALTUNSOY</td><td>33</td><td>43</td><td>44</td><td class="net-score">22,25</td><td>54.571</td><td class="success-rate success-low">%83,74</td></tr>
+                                <tr><td><span class="rank-badge rank-other">15</span></td><td>SILA AÇAR</td><td>33</td><td>45</td><td>42</td><td class="net-score">21,75</td><td>55.107</td><td class="success-rate success-low">%84,56</td></tr>
+                                <tr><td><span class="rank-badge rank-other">16</span></td><td>AZRA AKÇAY</td><td>28</td><td>26</td><td>66</td><td class="net-score">21,50</td><td>55.198</td><td class="success-rate success-low">%84,70</td></tr>
+                                <tr><td><span class="rank-badge rank-other">17</span></td><td>UMUT GÜVEN KUBİLAY</td><td>29</td><td>33</td><td>58</td><td class="net-score">20,75</td><td>55.707</td><td class="success-rate success-low">%85,48</td></tr>
+                                <tr><td><span class="rank-badge rank-other">18</span></td><td>EVİN YANARDAĞ</td><td>30</td><td>42</td><td>48</td><td class="net-score">19,50</td><td>56.535</td><td class="success-rate success-low">%86,75</td></tr>
+                                <tr><td><span class="rank-badge rank-other">19</span></td><td>EFE ULUSAL</td><td>22</td><td>31</td><td>67</td><td class="net-score">14,25</td><td>59.629</td><td class="success-rate success-verylow">%91,50</td></tr>
+                                <tr><td><span class="rank-badge rank-other">20</span></td><td>BEYZANUR ÇOBAN</td><td>21</td><td>29</td><td>70</td><td class="net-score">13,75</td><td>59.838</td><td class="success-rate success-verylow">%91,82</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                 <div class="alert alert-danger">
+                    <h4>⚠️ ACİL DİKKAT GEREKTİREN KONULAR (Başarı < 25%)</h4>
+                    <ul>
+                        <li><b>Matematik & Geometri:</b> Alanın tamamı kritik durumda. Konuların çoğunda başarı %10'un altındadır.</li>
+                        <li><b>Fen Bilimleri:</b> Alanın tamamı çok zayıf. Biyoloji - Kalıtım (%18) ve Canlılar Dünyası (%17) dışındaki birçok konuda başarı %10'un altındadır.</li>
+                        <li><b>Türkçe:</b> Cümlenin Ögeleri (%10), Fiilimsiler (%13), Ekler ve Sözcük Yapısı (%23).</li>
+                        <li><b>Coğrafya:</b> Beşeri Sistemler (%20).</li>
+                    </ul>
+                </div>
+                <div class="alert alert-success">
+                    <h4>✅ GÜÇLÜ KONULAR (Başarı > 60%)</h4>
+                    <ul>
+                        <li><b>Türkçe:</b> Paragraf Yorumu (%62).</li>
+                        <li><b>Din Kültürü:</b> Neredeyse tüm konular (%58 - %83 arası).</li>
+                        <li><b>Tarih:</b> Dünya Gücü Osmanlı (%70), Atatürkçülük ve Türk İnkılabı (%65).</li>
+                        <li><b>Coğrafya:</b> Küresel Ortam (%65), Çevre ve Toplum (%65).</li>
+                    </ul>
+                </div>
+                <div class="grid-container">
+                    <div class="section">
+                        <h2 class="section-title">📝 TÜRKÇE</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Paragraf Yorumu</div><div class="konu-percentage">61.5%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 61.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Paragrafın Yapısı</div><div class="konu-percentage">48.8%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 48.8%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Cümlenin Anlamı ve Yorumu</div><div class="konu-percentage">48.3%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 48.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Noktalama İşaretleri</div><div class="konu-percentage">47.5%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 47.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Yazım Kuralları</div><div class="konu-percentage">45.0%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 45.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Anlatım Teknikleri</div><div class="konu-percentage">40.0%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 40.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Sözcükte ve Söz Öbeklerinde Anlam</div><div class="konu-percentage">35.0%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 35.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Ekler ve Sözcük Yapısı</div><div class="konu-percentage">23.3%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 23.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fiilimsiler</div><div class="konu-percentage">13.3%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 13.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Cümlenin Ögeleri</div><div class="konu-percentage">10.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 10.0%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🌍 SOSYAL BİLİMLER</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - İslam ve Bilim</div><div class="konu-percentage">83.3%</div></div><div class="progress-bar"><div class="progress-fill excellent" style="width: 83.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Güncel Dini Meseleler</div><div class="konu-percentage">73.3%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 73.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Dünya Gücü Osmanlı</div><div class="konu-percentage">70.0%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 70.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Atatürkçülük ve Türk İnkılabı</div><div class="konu-percentage">65.0%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 65.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Coğrafya - Küresel Ortam: Bölgeler ve Ülkeler</div><div class="konu-percentage">65.0%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 65.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Coğrafya - Çevre ve Toplum</div><div class="konu-percentage">65.0%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 65.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Dünya ve Ahiret</div><div class="konu-percentage">60.0%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 60.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - İslam ve İbadet</div><div class="konu-percentage">58.3%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 58.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Felsefe - MS 2. Yüzyıl-MS 15. Yüzyıl Felsefesi</div><div class="konu-percentage">55.0%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 55.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - İlk ve Orta Çağlarda Türk Dünyası</div><div class="konu-percentage">50.0%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 50.0%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🔢 TEMEL MATEMATİK</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kümeler</div><div class="konu-percentage">30.0%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 30.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Birinci Dereceden Denklemler</div><div class="konu-percentage">20.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 20.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Sayılar</div><div class="konu-percentage">15.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 15.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Rasyonel Sayılar</div><div class="konu-percentage">15.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 15.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Problemler</div><div class="konu-percentage">4.5%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 4.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Üslü ve Köklü İfadeler</div><div class="konu-percentage">2.5%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 2.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fonksiyonlar</div><div class="konu-percentage">2.5%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 2.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Mutlak Değer</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Mantık</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Bölünebilme ve EBOB-EKOK</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🔬 FEN BİLİMLERİ</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Kalıtımın Genel İlkeleri</div><div class="konu-percentage">18.3%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 18.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Canlılar Dünyası</div><div class="konu-percentage">16.7%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 16.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Kimya Bilimi</div><div class="konu-percentage">10.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 10.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Hareket ve Kuvvet</div><div class="konu-percentage">7.5%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 7.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Hücre Bölünmeleri</div><div class="konu-percentage">5.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 5.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Ekosistem Ekolojisi</div><div class="konu-percentage">5.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 5.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Atom ve Periyodik Sistem</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Basınç ve Kaldırma Kuvveti</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Elektrostatik</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Maddenin Halleri</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="12D" class="tab-content">
+        <div class="container">
+            <div class="header"><h1>12-D Sınıf Analizi</h1><p>18 Öğrencinin Sonuçları</p></div>
+            <div class="summary">
+                <div class="summary-card"><h3>Türkçe</h3><div class="value">33.5%</div></div>
+                <div class="summary-card"><h3>Sosyal Bilimler</h3><div class="value">34.9%</div></div>
+                <div class="summary-card"><h3>Temel Matematik</h3><div class="value">1.8%</div></div>
+                <div class="summary-card"><h3>Fen Bilimleri</h3><div class="value">1.9%</div></div>
+            </div>
+            <div class="content">
+                <div class="section">
+                    <h2 class="section-title">Sınıf Sonuç Listesi</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Sıra</th>
+                                    <th>Öğrenci Adı</th>
+                                    <th>Doğru</th>
+                                    <th>Yanlış</th>
+                                    <th>Boş</th>
+                                    <th>Net</th>
+                                    <th>Genel Sıralama</th>
+                                    <th>Başarı %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><span class="rank-badge rank-top3">1</span></td><td>MUSA ERKAN</td><td>47</td><td>28</td><td>45</td><td class="net-score">40,00</td><td>37.519</td><td class="success-rate success-high">%57,57</td></tr>
+                                <tr><td><span class="rank-badge rank-top3">2</span></td><td>BERAT ZORLU</td><td>46</td><td>34</td><td>40</td><td class="net-score">37,50</td><td>40.128</td><td class="success-rate success-high">%61,58</td></tr>
+                                <tr><td><span class="rank-badge rank-top3">3</span></td><td>NERİMAN NUR TÜRKOĞLU</td><td>36</td><td>26</td><td>58</td><td class="net-score">29,50</td><td>48.543</td><td class="success-rate success-low">%74,49</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">4</span></td><td>HÜSEYİN ERKEK</td><td>36</td><td>26</td><td>58</td><td class="net-score">29,50</td><td>48.590</td><td class="success-rate success-low">%74,56</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">5</span></td><td>ULAŞ GÜVEN</td><td>32</td><td>14</td><td>74</td><td class="net-score">28,50</td><td>49.380</td><td class="success-rate success-low">%75,77</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">6</span></td><td>HİRANUR ANLAR</td><td>36</td><td>32</td><td>52</td><td class="net-score">28,00</td><td>50.098</td><td class="success-rate success-low">%76,88</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">7</span></td><td>DİCLE AYYILDIZ</td><td>32</td><td>28</td><td>60</td><td class="net-score">25,00</td><td>52.484</td><td class="success-rate success-low">%80,54</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">8</span></td><td>ELİFNAZ ÖZÇELİK</td><td>30</td><td>25</td><td>65</td><td class="net-score">23,75</td><td>53.558</td><td class="success-rate success-low">%82,19</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">9</span></td><td>YAĞMUR ALTUNDAĞ</td><td>29</td><td>24</td><td>67</td><td class="net-score">23,00</td><td>54.193</td><td class="success-rate success-low">%83,16</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">10</span></td><td>NİSA NARİN</td><td>25</td><td>11</td><td>84</td><td class="net-score">22,25</td><td>54.637</td><td class="success-rate success-low">%83,84</td></tr>
+                                <tr><td><span class="rank-badge rank-other">11</span></td><td>KAAN DUMAN</td><td>27</td><td>30</td><td>63</td><td class="net-score">19,50</td><td>56.631</td><td class="success-rate success-verylow">%86,90</td></tr>
+                                <tr><td><span class="rank-badge rank-other">12</span></td><td>İLAYDA YILMAZ</td><td>22</td><td>19</td><td>79</td><td class="net-score">17,25</td><td>58.009</td><td class="success-rate success-verylow">%89,02</td></tr>
+                                <tr><td><span class="rank-badge rank-other">13</span></td><td>SILA ALABAY</td><td>24</td><td>30</td><td>66</td><td class="net-score">16,50</td><td>58.360</td><td class="success-rate success-verylow">%89,55</td></tr>
+                                <tr><td><span class="rank-badge rank-other">14</span></td><td>BUĞRAYAĞIZ SELÇUK</td><td>24</td><td>34</td><td>62</td><td class="net-score">15,50</td><td>58.972</td><td class="success-rate success-verylow">%90,49</td></tr>
+                                <tr><td><span class="rank-badge rank-other">15</span></td><td>SEMİHA ÖRDEK</td><td>25</td><td>54</td><td>41</td><td class="net-score">11,50</td><td>60.916</td><td class="success-rate success-verylow">%93,48</td></tr>
+                                <tr><td><span class="rank-badge rank-other">16</span></td><td>FİLİZ ASLAN</td><td>28</td><td>83</td><td>9</td><td class="net-score">7,25</td><td>62.427</td><td class="success-rate success-verylow">%95,80</td></tr>
+                                <tr><td><span class="rank-badge rank-other">17</span></td><td>DEFNE KÖSE</td><td>15</td><td>41</td><td>64</td><td class="net-score">4,75</td><td>63.176</td><td class="success-rate success-verylow">%96,94</td></tr>
+                                <tr><td><span class="rank-badge rank-other">18</span></td><td>HİKMET YEŞİLDAĞ</td><td>11</td><td>35</td><td>74</td><td class="net-score">2,25</td><td>64.360</td><td class="success-rate success-verylow">%98,76</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="alert alert-danger">
+                    <h4>⚠️ ACİL DİKKAT GEREKTİREN KONULAR (Başarı < 25%)</h4>
+                    <ul>
+                        <li><b>Matematik & Geometri:</b> Alanın tamamı kritik durumda. Konuların tamamına yakını %10'un altında başarı oranına sahiptir.</li>
+                        <li><b>Fen Bilimleri:</b> Alanın tamamı çok zayıf. Kimya Bilimi (%11) dışındaki tüm konularda başarı %10'un altındadır.</li>
+                        <li><b>Türkçe:</b> Cümlenin Ögeleri (%11), Ekler ve Sözcük Yapısı (%14), Fiilimsiler (%11).</li>
+                        <li><b>Tarih:</b> Milli Mücadele (%22), Atatürkçülük ve Türk İnkılabı (%22).</li>
+                    </ul>
+                </div>
+                <div class="alert alert-success">
+                    <h4>✅ GÜÇLÜ KONULAR (Başarı > 60%)</h4>
+                    <ul>
+                        <li><b>Türkçe:</b> Paragraf Yorumu (%62).</li>
+                        <li><b>Din Kültürü:</b> Neredeyse tüm konular (%61 - %83 arası).</li>
+                        <li><b>Tarih:</b> Dünya Gücü Osmanlı (%67).</li>
+                    </ul>
+                </div>
+                <div class="grid-container">
+                    <div class="section">
+                        <h2 class="section-title">📝 TÜRKÇE</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Paragraf Yorumu</div><div class="konu-percentage">62.0%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 62.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Noktalama İşaretleri</div><div class="konu-percentage">55.6%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 55.6%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Cümlenin Anlamı ve Yorumu</div><div class="konu-percentage">50.9%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 50.9%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Anlatım Teknikleri</div><div class="konu-percentage">44.4%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 44.4%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Paragrafın Yapısı</div><div class="konu-percentage">43.1%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 43.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Sözcükte ve Söz Öbeklerinde Anlam</div><div class="konu-percentage">30.6%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 30.6%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Yazım Kuralları</div><div class="konu-percentage">25.0%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 25.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Ekler ve Sözcük Yapısı</div><div class="konu-percentage">13.9%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 13.9%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Cümlenin Ögeleri</div><div class="konu-percentage">11.1%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 11.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fiilimsiler</div><div class="konu-percentage">11.1%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 11.1%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🌍 SOSYAL BİLİMLER</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - İslam ve Bilim</div><div class="konu-percentage">83.3%</div></div><div class="progress-bar"><div class="progress-fill excellent" style="width: 83.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Güncel Dini Meseleler</div><div class="konu-percentage">83.3%</div></div><div class="progress-bar"><div class="progress-fill excellent" style="width: 83.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Dünya ve Ahiret</div><div class="konu-percentage">72.2%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 72.2%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Dünya Gücü Osmanlı</div><div class="konu-percentage">66.7%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 66.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Bilgi ve İnanç</div><div class="konu-percentage">61.1%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 61.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Coğrafya - Çevre ve Toplum</div><div class="konu-percentage">55.6%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 55.6%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Coğrafya - Doğal Sistemler</div><div class="konu-percentage">44.4%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 44.4%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - İlk ve Orta Çağlarda Türk Dünyası</div><div class="konu-percentage">38.9%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 38.9%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Felsefe - 15-17. Yüzyıl Felsefesi</div><div class="konu-percentage">36.1%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 36.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Milli Mücadele</div><div class="konu-percentage">22.2%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 22.2%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🔢 TEMEL MATEMATİK</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Sayılar</div><div class="konu-percentage">9.7%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 9.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Üslü ve Köklü İfadeler</div><div class="konu-percentage">5.6%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 5.6%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kümeler</div><div class="konu-percentage">5.6%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 5.6%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Mantık</div><div class="konu-percentage">5.6%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 5.6%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Problemler</div><div class="konu-percentage">2.5%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 2.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Rasyonel Sayılar</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Birinci Dereceden Denklemler</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Mutlak Değer</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fonksiyonlar</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Geometri - Özel Üçgenler</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🔬 FEN BİLİMLERİ</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Kimya Bilimi</div><div class="konu-percentage">11.1%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 11.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Isı ve Sıcaklık</div><div class="konu-percentage">5.6%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 5.6%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Dalgalar</div><div class="konu-percentage">5.6%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 5.6%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Kalıtımın Genel İlkeleri</div><div class="konu-percentage">5.6%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 5.6%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Hareket ve Kuvvet</div><div class="konu-percentage">2.8%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 2.8%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Basınç ve Kaldırma Kuvveti</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Atom ve Periyodik Sistem</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Hücre</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Canlılar Dünyası</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Hücre Bölünmeleri</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="12E" class="tab-content">
+        <div class="container">
+            <div class="header"><h1>12-E Sınıf Analizi</h1><p>8 Öğrencinin Sonuçları</p></div>
+            <div class="summary">
+                <div class="summary-card"><h3>Türkçe</h3><div class="value">33.4%</div></div>
+                <div class="summary-card"><h3>Sosyal Bilimler</h3><div class="value">33.8%</div></div>
+                <div class="summary-card"><h3>Temel Matematik</h3><div class="value">4.1%</div></div>
+                <div class="summary-card"><h3>Fen Bilimleri</h3><div class="value">3.0%</div></div>
+            </div>
+            <div class="content">
+                <div class="section">
+                    <h2 class="section-title">Sınıf Sonuç Listesi</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Sıra</th>
+                                    <th>Öğrenci Adı</th>
+                                    <th>Doğru</th>
+                                    <th>Yanlış</th>
+                                    <th>Boş</th>
+                                    <th>Net</th>
+                                    <th>Genel Sıralama</th>
+                                    <th>Başarı %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><span class="rank-badge rank-top3">1</span></td><td>M İSLAM ALKAN</td><td>42</td><td>15</td><td>63</td><td class="net-score">38,25</td><td>39.351</td><td class="success-rate success-high">%60,38</td></tr>
+                                <tr><td><span class="rank-badge rank-top3">2</span></td><td>RABİA ÇINAR</td><td>36</td><td>32</td><td>52</td><td class="net-score">28,00</td><td>50.002</td><td class="success-rate success-low">%76,73</td></tr>
+                                <tr><td><span class="rank-badge rank-top3">3</span></td><td>HAZAL ÖZDEMİR</td><td>34</td><td>33</td><td>53</td><td class="net-score">25,75</td><td>51.902</td><td class="success-rate success-low">%79,64</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">4</span></td><td>TUANA GÖĞÜŞ</td><td>34</td><td>35</td><td>51</td><td class="net-score">25,25</td><td>52.474</td><td class="success-rate success-low">%80,52</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">5</span></td><td>YAKUP KARAKUŞ</td><td>31</td><td>25</td><td>64</td><td class="net-score">24,75</td><td>52.834</td><td class="success-rate success-low">%81,07</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">6</span></td><td>ELİF CAN KUTLUTÜRK</td><td>33</td><td>28</td><td>59</td><td class="net-score">26,00</td><td>51.747</td><td class="success-rate success-low">%79,41</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">7</span></td><td>ELİF BUSE BAL</td><td>24</td><td>26</td><td>70</td><td class="net-score">17,50</td><td>57.894</td><td class="success-rate success-verylow">%88,84</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">8</span></td><td>ELİF KORKMAZ</td><td>23</td><td>24</td><td>73</td><td class="net-score">17,00</td><td>58.131</td><td class="success-rate success-verylow">%89,20</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="alert alert-danger">
+                    <h4>⚠️ ACİL DİKKAT GEREKTİREN KONULAR (Başarı < 25%)</h4>
+                    <ul>
+                        <li><b>Matematik & Geometri:</b> Alanın tamamı kritik durumda. Konuların çoğunda başarı %10'un altındadır.</li>
+                        <li><b>Fen Bilimleri:</b> Alanın tamamı çok zayıf. Konuların büyük çoğunluğunda başarı %0'dır.</li>
+                        <li><b>Türkçe:</b> Ekler ve Sözcük Yapısı (%18), Cümlenin Ögeleri (%21).</li>
+                        <li><b>Tarih:</b> Milli Mücadele (%15), Atatürkçülük ve Türk İnkılabı (%15).</li>
+                        <li><b>Coğrafya:</b> Beşeri Sistemler (%13).</li>
+                    </ul>
+                </div>
+                <div class="alert alert-success">
+                    <h4>✅ GÜÇLÜ KONULAR (Başarı > 60%)</h4>
+                    <ul>
+                        <li><b>Türkçe:</b> Paragraf Yorumu (%68), Cümlenin Anlamı ve Yorumu (%67).</li>
+                        <li><b>Din Kültürü:</b> Tüm konular (%63 - %88 arası).</li>
+                        <li><b>Tarih:</b> İlk ve Orta Çağlarda Türk Dünyası (%63), Dünya Gücü Osmanlı (%63).</li>
+                    </ul>
+                </div>
+                <div class="grid-container">
+                    <div class="section">
+                        <h2 class="section-title">📝 TÜRKÇE</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Paragraf Yorumu</div><div class="konu-percentage">68.5%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 68.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Cümlenin Anlamı ve Yorumu</div><div class="konu-percentage">66.7%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 66.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Paragrafın Yapısı</div><div class="konu-percentage">50.0%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 50.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Noktalama İşaretleri</div><div class="konu-percentage">43.8%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 43.8%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Anlatım Teknikleri</div><div class="konu-percentage">43.8%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 43.8%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Sözcükte ve Söz Öbeklerinde Anlam</div><div class="konu-percentage">34.4%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 34.4%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Yazım Kuralları</div><div class="konu-percentage">31.3%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 31.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fiilimsiler</div><div class="konu-percentage">25.0%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 25.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Cümlenin Ögeleri</div><div class="konu-percentage">20.8%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 20.8%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Ekler ve Sözcük Yapısı</div><div class="konu-percentage">17.5%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 17.5%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🌍 SOSYAL BİLİMLER</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - İslam ve Bilim</div><div class="konu-percentage">87.5%</div></div><div class="progress-bar"><div class="progress-fill excellent" style="width: 87.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Güncel Dini Meseleler</div><div class="konu-percentage">87.5%</div></div><div class="progress-bar"><div class="progress-fill excellent" style="width: 87.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Dünya ve Ahiret</div><div class="konu-percentage">75.0%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 75.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - İlk ve Orta Çağlarda Türk Dünyası</div><div class="konu-percentage">62.5%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 62.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Dünya Gücü Osmanlı</div><div class="konu-percentage">62.5%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 62.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Bilgi ve İnanç</div><div class="konu-percentage">62.5%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 62.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Felsefe - MS 2. Yüzyıl-MS 15. Yüzyıl Felsefesi</div><div class="konu-percentage">50.0%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 50.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Felsefe - 15-17. Yüzyıl Felsefesi</div><div class="konu-percentage">43.8%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 43.8%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Coğrafya - Çevre ve Toplum</div><div class="konu-percentage">37.5%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 37.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Milli Mücadele</div><div class="konu-percentage">15.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 15.0%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🔢 TEMEL MATEMATİK</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kümeler</div><div class="konu-percentage">25.0%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 25.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Sayılar</div><div class="konu-percentage">9.4%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 9.4%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Üslü ve Köklü İfadeler</div><div class="konu-percentage">6.3%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 6.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Birinci Dereceden Denklemler</div><div class="konu-percentage">6.3%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 6.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Mutlak Değer</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Rasyonel Sayılar</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Mantık</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fonksiyonlar</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Bölünebilme ve EBOB-EKOK</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Problemler</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🔬 FEN BİLİMLERİ</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Isı ve Sıcaklık</div><div class="konu-percentage">12.5%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 12.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Kalıtımın Genel İlkeleri</div><div class="konu-percentage">12.5%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 12.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Basınç ve Kaldırma Kuvveti</div><div class="konu-percentage">12.5%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 12.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Kimya Bilimi</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Maddenin Halleri</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Hücre</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Hareket ve Kuvvet</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Elektrostatik</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Atom ve Periyodik Sistem</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Yaşam Bilimi Biyoloji</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="12F" class="tab-content">
+        <div class="container">
+            <div class="header"><h1>12-F Sınıf Analizi</h1><p>6 Öğrencinin Sonuçları</p></div>
+            <div class="summary">
+                <div class="summary-card"><h3>Türkçe</h3><div class="value">33.5%</div></div>
+                <div class="summary-card"><h3>Sosyal Bilimler</h3><div class="value">27.3%</div></div>
+                <div class="summary-card"><h3>Temel Matematik</h3><div class="value">3.5%</div></div>
+                <div class="summary-card"><h3>Fen Bilimleri</h3><div class="value">4.2%</div></div>
+            </div>
+            <div class="content">
+                <div class="section">
+                    <h2 class="section-title">Sınıf Sonuç Listesi</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Sıra</th>
+                                    <th>Öğrenci Adı</th>
+                                    <th>Doğru</th>
+                                    <th>Yanlış</th>
+                                    <th>Boş</th>
+                                    <th>Net</th>
+                                    <th>Genel Sıralama</th>
+                                    <th>Başarı %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><span class="rank-badge rank-top3">1</span></td><td>NAZLICAN DOĞAN</td><td>49</td><td>23</td><td>48</td><td class="net-score">43,25</td><td>33.399</td><td class="success-rate success-high">%51,25</td></tr>
+                                <tr><td><span class="rank-badge rank-top3">2</span></td><td>ELİF NUR SAKLLIM</td><td>44</td><td>17</td><td>59</td><td class="net-score">39,75</td><td>37.555</td><td class="success-rate success-high">%57,63</td></tr>
+                                <tr><td><span class="rank-badge rank-top3">3</span></td><td>MURAT DOĞAN</td><td>36</td><td>37</td><td>47</td><td class="net-score">26,75</td><td>51.128</td><td class="success-rate success-low">%78,46</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">4</span></td><td>TUTKUM YAREN Ö AL</td><td>30</td><td>24</td><td>66</td><td class="net-score">24,00</td><td>53.385</td><td class="success-rate success-low">%81,92</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">5</span></td><td>RABİYA NUR BALKAYA</td><td>30</td><td>29</td><td>61</td><td class="net-score">22,75</td><td>54.283</td><td class="success-rate success-low">%83,30</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">6</span></td><td>ARJİN ROZA HASDEMİR</td><td>21</td><td>24</td><td>75</td><td class="net-score">15,00</td><td>59.206</td><td class="success-rate success-verylow">%90,85</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="alert alert-danger">
+                    <h4>⚠️ ACİL DİKKAT GEREKTİREN KONULAR (Başarı < 25%)</h4>
+                    <ul>
+                        <li><b>Matematik & Geometri:</b> Alanın tamamı kritik durumda. Konuların çoğunda başarı %10'un altındadır.</li>
+                        <li><b>Fen Bilimleri:</b> Alanın tamamı çok zayıf. Konuların büyük çoğunluğunda başarı %0'dır.</li>
+                        <li><b>Türkçe:</b> Cümlenin Ögeleri (%0), Fiilimsiler (%17).</li>
+                        <li><b>Coğrafya:</b> Beşeri Sistemler (%17).</li>
+                        <li><b>Tarih:</b> Milli Mücadele (%17).</li>
+                    </ul>
+                </div>
+                <div class="alert alert-success">
+                    <h4>✅ GÜÇLÜ KONULAR (Başarı > 60%)</h4>
+                    <ul>
+                        <li><b>Türkçe:</b> Paragraf Yorumu (%66).</li>
+                        <li><b>Din Kültürü:</b> Dünya ve Ahiret (%75), Güncel Dini Meseleler (%75), Bilgi ve İnanç (%67).</li>
+                        <li><b>Tarih:</b> Dünya Gücü Osmanlı (%67).</li>
+                    </ul>
+                </div>
+                <div class="grid-container">
+                    <div class="section">
+                        <h2 class="section-title">📝 TÜRKÇE</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Paragraf Yorumu</div><div class="konu-percentage">66.4%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 66.4%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Noktalama İşaretleri</div><div class="konu-percentage">50.0%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 50.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Yazım Kuralları</div><div class="konu-percentage">50.0%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 50.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Paragrafın Yapısı</div><div class="konu-percentage">47.9%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 47.9%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Cümlenin Anlamı ve Yorumu</div><div class="konu-percentage">44.4%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 44.4%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Anlatım Teknikleri</div><div class="konu-percentage">33.3%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 33.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Sözcükte ve Söz Öbeklerinde Anlam</div><div class="konu-percentage">25.0%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 25.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Ekler ve Sözcük Yapısı</div><div class="konu-percentage">16.7%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 16.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fiilimsiler</div><div class="konu-percentage">16.7%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 16.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Cümlenin Ögeleri</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🌍 SOSYAL BİLİMLER</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Dünya ve Ahiret</div><div class="konu-percentage">75.0%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 75.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Güncel Dini Meseleler</div><div class="konu-percentage">75.0%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 75.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Dünya Gücü Osmanlı</div><div class="konu-percentage">66.7%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 66.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Bilgi ve İnanç</div><div class="konu-percentage">66.7%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 66.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - İlk ve Orta Çağlarda Türk Dünyası</div><div class="konu-percentage">50.0%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 50.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Atatürkçülük ve Türk İnkılabı</div><div class="konu-percentage">50.0%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 50.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Felsefe - Felsefenin Temel Konuları</div><div class="konu-percentage">37.5%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 37.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Felsefe - 15-17. Yüzyıl Felsefesi</div><div class="konu-percentage">33.3%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 33.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Coğrafya - Doğal Sistemler</div><div class="konu-percentage">25.0%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 25.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Milli Mücadele</div><div class="konu-percentage">16.7%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 16.7%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🔢 TEMEL MATEMATİK</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kümeler</div><div class="konu-percentage">33.3%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 33.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Birinci Dereceden Denklemler</div><div class="konu-percentage">16.7%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 16.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Sayılar</div><div class="konu-percentage">8.3%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 8.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fonksiyonlar</div><div class="konu-percentage">8.3%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 8.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Rasyonel Sayılar</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Üslü ve Köklü İfadeler</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Mutlak Değer</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Mantık</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Bölünebilme ve EBOB-EKOK</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Problemler</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🔬 FEN BİLİMLERİ</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Basınç ve Kaldırma Kuvveti</div><div class="konu-percentage">16.7%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 16.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Hücre Bölünmeleri</div><div class="konu-percentage">16.7%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 16.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Kalıtımın Genel İlkeleri</div><div class="konu-percentage">16.7%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 16.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Kimya Bilimi</div><div class="konu-percentage">16.7%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 16.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Hareket ve Kuvvet</div><div class="konu-percentage">4.2%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 4.2%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Atom ve Periyodik Sistem</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Hücre</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Isı ve Sıcaklık</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Optik</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Maddenin Halleri</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="12G" class="tab-content">
+        <div class="container">
+            <div class="header"><h1>12-G Sınıf Analizi</h1><p>11 Öğrencinin Sonuçları</p></div>
+            <div class="summary">
+                <div class="summary-card"><h3>Türkçe</h3><div class="value">41.1%</div></div>
+                <div class="summary-card"><h3>Sosyal Bilimler</h3><div class="value">41.5%</div></div>
+                <div class="summary-card"><h3>Temel Matematik</h3><div class="value">5.2%</div></div>
+                <div class="summary-card"><h3>Fen Bilimleri</h3><div class="value">5.5%</div></div>
+            </div>
+            <div class="content">
+                <div class="section">
+                    <h2 class="section-title">Sınıf Sonuç Listesi</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Sıra</th>
+                                    <th>Öğrenci Adı</th>
+                                    <th>Doğru</th>
+                                    <th>Yanlış</th>
+                                    <th>Boş</th>
+                                    <th>Net</th>
+                                    <th>Genel Sıralama</th>
+                                    <th>Başarı %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><span class="rank-badge rank-top3">1</span></td><td>ALTAY BÜYÜK</td><td>53</td><td>18</td><td>49</td><td class="net-score">48,50</td><td>27.942</td><td class="success-rate success-high">%42,88</td></tr>
+                                <tr><td><span class="rank-badge rank-top3">2</span></td><td>İLAYDA KESMEZ</td><td>45</td><td>26</td><td>49</td><td class="net-score">38,50</td><td>38.945</td><td class="success-rate success-high">%59,76</td></tr>
+                                <tr><td><span class="rank-badge rank-top3">3</span></td><td>ECRİN SEZER</td><td>40</td><td>10</td><td>70</td><td class="net-score">37,50</td><td>40.318</td><td class="success-rate success-high">%61,87</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">4</span></td><td>AYÇA GÜL R</td><td>41</td><td>23</td><td>56</td><td class="net-score">35,25</td><td>42.571</td><td class="success-rate success-high">%65,33</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">5</span></td><td>ZEYNEP BUSE BAYAR</td><td>40</td><td>24</td><td>56</td><td class="net-score">34,00</td><td>44.105</td><td class="success-rate success-medium">%67,68</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">6</span></td><td>BERRA BULUT</td><td>38</td><td>17</td><td>65</td><td class="net-score">33,75</td><td>44.197</td><td class="success-rate success-medium">%67,82</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">7</span></td><td>MEHMET ÖZTÜRK</td><td>40</td><td>26</td><td>54</td><td class="net-score">33,50</td><td>44.422</td><td class="success-rate success-medium">%68,17</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">8</span></td><td>UFUK AYIK</td><td>37</td><td>24</td><td>59</td><td class="net-score">31,00</td><td>47.055</td><td class="success-rate success-medium">%72,21</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">9</span></td><td>DUYGUNAZ AKIN</td><td>43</td><td>48</td><td>29</td><td class="net-score">31,00</td><td>47.273</td><td class="success-rate success-medium">%72,54</td></tr>
+                                <tr><td><span class="rank-badge rank-top10">10</span></td><td>ESLEM KELLEVEZİR</td><td>36</td><td>31</td><td>53</td><td class="net-score">28,25</td><td>49.675</td><td class="success-rate success-low">%76,23</td></tr>
+                                <tr><td><span class="rank-badge rank-other">11</span></td><td>YUSUF AKTAŞ</td><td>32</td><td>31</td><td>57</td><td class="net-score">24,25</td><td>53.281</td><td class="success-rate success-low">%81,76</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="alert alert-danger">
+                    <h4>⚠️ ACİL DİKKAT GEREKTİREN KONULAR (Başarı < 25%)</h4>
+                    <ul>
+                        <li><b>Matematik & Geometri:</b> Alanın tamamı kritik durumda. Konuların çoğunda başarı %10'un altındadır. Problemler (%8.3) ve Sayılar (%11.4) en zayıf halkalardır.</li>
+                        <li><b>Fen Bilimleri:</b> Biyoloji konuları dışında neredeyse tüm konularda başarı %10'un altındadır.</li>
+                        <li><b>Türkçe:</b> Cümlenin Ögeleri (%22), Ekler ve Sözcük Yapısı (%18).</li>
+                        <li><b>Coğrafya:</b> Doğal Sistemler (%23).</li>
+                    </ul>
+                </div>
+                <div class="alert alert-success">
+                    <h4>✅ GÜÇLÜ KONULAR (Başarı > 60%)</h4>
+                    <ul>
+                        <li><b>Türkçe:</b> Paragraf Yorumu (%72), Paragrafın Yapısı (%68), Cümlenin Anlamı ve Yorumu (%67).</li>
+                        <li><b>Din Kültürü:</b> Tüm konular (%64 - %91 arası).</li>
+                        <li><b>Tarih:</b> Tüm konular (%55 - %73 arası).</li>
+                        <li><b>Felsefe:</b> 15-17. Yüzyıl Felsefesi (%77), MS 2. Yüzyıl-MS 15. Yüzyıl Felsefesi (%64).</li>
+                    </ul>
+                </div>
+                <div class="grid-container">
+                    <div class="section">
+                        <h2 class="section-title">📝 TÜRKÇE</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Paragraf Yorumu</div><div class="konu-percentage">72.3%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 72.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Paragrafın Yapısı</div><div class="konu-percentage">68.2%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 68.2%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Cümlenin Anlamı ve Yorumu</div><div class="konu-percentage">66.7%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 66.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Anlatım Teknikleri</div><div class="konu-percentage">54.5%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 54.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Noktalama İşaretleri</div><div class="konu-percentage">50.0%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 50.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Yazım Kuralları</div><div class="konu-percentage">50.0%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 50.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Sözcükte ve Söz Öbeklerinde Anlam</div><div class="konu-percentage">34.1%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 34.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fiilimsiler</div><div class="konu-percentage">31.8%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 31.8%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Cümlenin Ögeleri</div><div class="konu-percentage">22.7%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 22.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Ekler ve Sözcük Yapısı</div><div class="konu-percentage">18.2%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 18.2%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🌍 SOSYAL BİLİMLER</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Güncel Dini Meseleler</div><div class="konu-percentage">90.9%</div></div><div class="progress-bar"><div class="progress-fill excellent" style="width: 90.9%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - İslam ve Bilim</div><div class="konu-percentage">90.9%</div></div><div class="progress-bar"><div class="progress-fill excellent" style="width: 90.9%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Dünya ve Ahiret</div><div class="konu-percentage">81.8%</div></div><div class="progress-bar"><div class="progress-fill excellent" style="width: 81.8%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Felsefe - 15-17. Yüzyıl Felsefesi</div><div class="konu-percentage">77.3%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 77.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Dünya Gücü Osmanlı</div><div class="konu-percentage">72.7%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 72.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Atatürkçülük ve Türk İnkılabı</div><div class="konu-percentage">72.7%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 72.7%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - İslam ve İbadet</div><div class="konu-percentage">68.2%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 68.2%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Felsefe - MS 2. Yüzyıl-MS 15. Yüzyıl Felsefesi</div><div class="konu-percentage">63.6%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 63.6%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Din Kültürü - Bilgi ve İnanç</div><div class="konu-percentage">63.6%</div></div><div class="progress-bar"><div class="progress-fill good" style="width: 63.6%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Tarih - Türklerin İslamiyeti Kabulü</div><div class="konu-percentage">59.1%</div></div><div class="progress-bar"><div class="progress-fill medium" style="width: 59.1%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🔢 TEMEL MATEMATİK</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kümeler</div><div class="konu-percentage">27.3%</div></div><div class="progress-bar"><div class="progress-fill low" style="width: 27.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Üslü ve Köklü İfadeler</div><div class="konu-percentage">13.6%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 13.6%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Sayılar</div><div class="konu-percentage">11.4%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 11.4%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Geometri - Alan ve Açı İlişkileri</div><div class="konu-percentage">9.1%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 9.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Problemler</div><div class="konu-percentage">8.3%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 8.3%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Rasyonel Sayılar</div><div class="konu-percentage">4.5%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 4.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Birinci Dereceden Denklemler</div><div class="konu-percentage">4.5%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 4.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Geometri - Özel Üçgenler</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Mutlak Değer</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Mantık</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                    </div>
+                    <div class="section">
+                        <h2 class="section-title">🔬 FEN BİLİMLERİ</h2>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Hücre Bölünmeleri</div><div class="konu-percentage">18.2%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 18.2%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Yaşam Bilimi Biyoloji</div><div class="konu-percentage">18.2%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 18.2%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Hareket ve Kuvvet</div><div class="konu-percentage">9.1%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 9.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Hücre</div><div class="konu-percentage">9.1%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 9.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Isı ve Sıcaklık</div><div class="konu-percentage">9.1%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 9.1%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Kimya Bilimi</div><div class="konu-percentage">4.5%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 4.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Biyoloji - Kalıtımın Genel İlkeleri</div><div class="konu-percentage">4.5%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 4.5%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Basınç ve Kaldırma Kuvveti</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Fizik - Elektrostatik</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                        <div class="konu-item"><div class="konu-header"><div class="konu-name">Kimya - Atom ve Periyodik Sistem</div><div class="konu-percentage">0.0%</div></div><div class="progress-bar"><div class="progress-fill critical" style="width: 0.0%"></div></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<script>
+    
+    function downloadPDF() {
+        // Kullanıcıya bilgi ver
+        alert('PDF oluşturuluyor... Bu işlem 10-20 saniye sürebilir. Lütfen bekleyin.');
+        
+        // Butonu geçici olarak devre dışı bırak
+        const button = document.querySelector('.pdf-button');
+        const originalText = button.innerHTML;
+        button.innerHTML = '⏳ PDF Hazırlanıyor...';
+        button.disabled = true;
+        button.style.opacity = '0.6';
+        button.style.cursor = 'not-allowed';
+        
+        // Tüm sekmeleri görünür yap (PDF'e tümünü dahil etmek için)
+        const allTabs = document.querySelectorAll('.tab-content');
+        const originalDisplayStates = [];
+        
+        allTabs.forEach(tab => {
+            originalDisplayStates.push(tab.style.display);
+            tab.style.display = 'block'; // Tüm sekmeleri aç
+            tab.classList.add('active'); // Active class ekle
+        });
+        
+        // Tab butonlarını gizle
+        const tabContainer = document.querySelector('.tab-container');
+        tabContainer.style.display = 'none';
+        
+        const element = document.querySelector('.main-container');
+        
+        const opt = {
+            margin: [10, 10, 10, 10],
+            filename: 'TYT_Tam_Analiz_Raporu.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { 
+                scale: 2, 
+                useCORS: true, 
+                letterRendering: true,
+                logging: false,
+                imageTimeout: 0
+            },
+            jsPDF: { 
+                unit: 'mm', 
+                format: 'a4', 
+                orientation: 'portrait' 
+            },
+            pagebreak: { 
+                mode: ['avoid-all', 'css', 'legacy'],
+                before: '.tab-content'
+            }
+        };
+        
+        html2pdf().set(opt).from(element).save().then(() => {
+            // İşlem bittikten sonra her şeyi eski haline getir
+            allTabs.forEach((tab, index) => {
+                tab.style.display = originalDisplayStates[index];
+                if (originalDisplayStates[index] !== 'block') {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            tabContainer.style.display = 'flex';
+            
+            button.innerHTML = originalText;
+            button.disabled = false;
+            button.style.opacity = '1';
+            button.style.cursor = 'pointer';
+            
+            alert('✅ PDF başarıyla indirildi!');
+        }).catch(error => {
+            console.error('PDF oluşturma hatası:', error);
+            
+            // Hata durumunda da her şeyi eski haline getir
+            allTabs.forEach((tab, index) => {
+                tab.style.display = originalDisplayStates[index];
+                if (originalDisplayStates[index] !== 'block') {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            tabContainer.style.display = 'flex';
+            
+            button.innerHTML = originalText;
+            button.disabled = false;
+            button.style.opacity = '1';
+            button.style.cursor = 'pointer';
+            
+            alert('❌ PDF oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.');
+        });
+    }
+
+    function openTab(evt, className) {
+        var i, tabcontent, tabbuttons;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tabbuttons = document.getElementsByClassName("tab-button");
+        for (i = 0; i < tabbuttons.length; i++) {
+            tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
+        }
+        document.getElementById(className).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelector('.tab-button.active').click();
+    });
+</script>function openTab(evt, className) {
+        var i, tabcontent, tabbuttons;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tabbuttons = document.getElementsByClassName("tab-button");
+        for (i = 0; i < tabbuttons.length; i++) {
+            tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
+        }
+        document.getElementById(className).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelector('.tab-button.active').click();
+    });
+</script>
+
+</body>
+</html>

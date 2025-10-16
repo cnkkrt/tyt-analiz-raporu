@@ -118,23 +118,62 @@ tbody tr:nth-child(even) { background: #f8f9fa; }
     </div>
 
     <div class="tab-container">
-        <button class="tab-button tab-school active" onclick="openTab(event, 'OkulGeneli')">🏫 OKUL GENELİ</button>
-	<button class="tab-button tab-school" onclick="openTab(event, 'SinifKarsilastirma')">📊 SINIF KARŞILAŞTIRMA</button>
-        <button class="tab-button" onclick="openTab(event, '12A')">12-A</button>
-        <button class="tab-button" onclick="openTab(event, '12B')">12-B</button>
-        <button class="tab-button" onclick="openTab(event, '12C')">12-C</button>
-        <button class="tab-button" onclick="openTab(event, '12D')">12-D</button>
-        <button class="tab-button" onclick="openTab(event, '12E')">12-E</button>
-        <button class="tab-button" onclick="openTab(event, '12F')">12-F</button>
-        <button class="tab-button" onclick="openTab(event, '12G')">12-G</button>
-	<!-- YENİ EKLENEN: Detaylı Rapor Butonu -->
-<button class="tab-button" onclick="openTab(event, 'DetayliRapor')" 
-        style="background: linear-gradient(135deg, #28a745, #20c997); 
-               border-bottom-color: #28a745; 
-               animation: pulse 2s infinite;">
+  <button class="tab-button tab-school active" onclick="openTab(event, 'OkulGeneli')">🏫 OKUL GENELİ</button>
+  <button class="tab-button tab-school" onclick="openTab(event, 'SinifKarsilastirma')">📊 SINIF KARŞILAŞTIRMA</button>
+  <button class="tab-button" onclick="openTab(event, '12A')">12-A</button>
+  <button class="tab-button" onclick="openTab(event, '12B')">12-B</button>
+  <button class="tab-button" onclick="openTab(event, '12C')">12-C</button>
+  <button class="tab-button" onclick="openTab(event, '12D')">12-D</button>
+  <button class="tab-button" onclick="openTab(event, '12E')">12-E</button>
+  <button class="tab-button" onclick="openTab(event, '12F')">12-F</button>
+  <button class="tab-button" onclick="openTab(event, '12G')">12-G</button>
+
+  <!-- YENİ EKLENEN: Detaylı Rapor Butonu -->
+  <button class="tab-button"
+          onclick="openTab(event, 'DetayliRapor')"
+          style="background: linear-gradient(135deg, #28a745, #20c997);
+                 border-bottom-color: #28a745; animation: pulse 2s infinite;">
     📋 DETAYLI RAPOR
-</button>
+  </button>
+</div> <!-- tab-container biter -->
+
+<!-- <<< BURAYA PDF İNDİR BUTONU >>> -->
+<button class="pdf-button" onclick="downloadPDF()">📄 Tüm Sayfayı PDF İndir</button>
+
+<!-- (İsteğe bağlı) PDF'yi sayfa içinde gösteren DetayliRapor sekmesi -->
+<div id="DetayliRapor" class="tab-content" style="display:none;">
+  <div class="container">
+    <div class="header" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+      <h1>📄 Detaylı Rapor (PDF)</h1>
+      <p>Raporu sayfa içinde görüntüleyebilir, yeni sekmede açabilir veya indirebilirsiniz.</p>
     </div>
+
+    <p style="margin:12px 0;">
+      <a href="./assets/pdf/tyt-detayli-neden-sonuc-analiz-raporu.pdf" target="_blank" rel="noopener" class="btn">📄 Yeni Sekmede Aç</a>
+      <a href="./assets/pdf/tyt-detayli-neden-sonuc-analiz-raporu.pdf" download class="btn" style="background:#2563eb;">⬇️ İndir</a>
+    </p>
+
+    <div style="height:85vh;border:0;box-shadow:0 6px 24px rgba(0,0,0,.12);">
+      <object data="./assets/pdf/tyt-detayli-neden-sonuc-analiz-raporu.pdf#view=FitH"
+              type="application/pdf" width="100%" height="100%">
+        <iframe src="./assets/pdf/tyt-detayli-neden-sonuc-analiz-raporu.pdf#view=FitH"
+                width="100%" height="100%" style="border:0;"></iframe>
+        <p>Tarayıcınız PDF’i gömülü gösteremedi.
+           <a href="./assets/pdf/tyt-detayli-neden-sonuc-analiz-raporu.pdf" target="_blank" rel="noopener">Buradan açın</a>.
+        </p>
+      </object>
+    </div>
+  </div>
+</div>
+
+<!-- Senin var olan ilk tabın aynı şekilde devam ediyor -->
+<div id="OkulGeneli" class="tab-content active">
+  <div class="container">
+    <div class="header" style="background: linear-gradient(135deg, #0d9488 0%, #2dd4bf 100%);">
+      <h1>📊 Okul Geneli Analizi</h1>
+      <p>102 Öğrencinin Ortalama Başarısı</p>
+    </div>
+    <!-- ... senin mevcut içeriklerin ... -->
 
     <div id="OkulGeneli" class="tab-content active">
         <div class="container">
@@ -1282,6 +1321,100 @@ tbody tr:nth-child(even) { background: #f8f9fa; }
     document.addEventListener("DOMContentLoaded", function() {
         document.querySelector('.tab-button.active').click();
     });
+</script>
+<script>
+async function downloadPDF() {
+  try {
+    // Buton referansı ve güvenlik
+    const button = document.querySelector('.pdf-button');
+    if (button) {
+      button.dataset.originalText = button.innerHTML;
+      button.innerHTML = '⏳ PDF Hazırlanıyor...';
+      button.disabled = true;
+      button.style.opacity = '0.6';
+      button.style.cursor = 'not-allowed';
+    }
+
+    // Tüm sekmeleri görünür yapıp orijinal durumlarını kaydet
+    const allTabs = document.querySelectorAll('.tab-content');
+    const originalDisplayStates = [];
+    const originallyActive = [];
+
+    allTabs.forEach(tab => {
+      originalDisplayStates.push(tab.style.display);
+      originallyActive.push(tab.classList.contains('active'));
+      tab.style.display = 'block';
+      tab.classList.add('active');
+    });
+
+    // Tab butonlarını gizle
+    const tabContainer = document.querySelector('.tab-container');
+    const tabContainerPrevDisplay = tabContainer ? tabContainer.style.display : null;
+    if (tabContainer) tabContainer.style.display = 'none';
+
+    // PDF'e çevrilecek ana kapsayıcı
+    const element = document.querySelector('.main-container');
+
+    // img/font gibi dış kaynakların yüklenmesini garanti et
+    await document.fonts?.ready;
+    await new Promise(r => setTimeout(r, 100)); // minik bekleme
+
+    // html2pdf seçenekleri
+    const opt = {
+      margin: [10, 10, 10, 10],
+      filename: 'TYT_Tam_Analiz_Raporu.pdf',
+      image: { type: 'jpeg', quality: 0.95 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        letterRendering: true,
+        logging: false,
+        imageTimeout: 0
+      },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'], before: '.tab-content' }
+    };
+
+    // PDF oluştur ve indir
+    await html2pdf().set(opt).from(element).save();
+
+    // (başarılı) restore
+    allTabs.forEach((tab, i) => {
+      tab.style.display = originalDisplayStates[i];
+      if (!originallyActive[i]) tab.classList.remove('active');
+    });
+    if (tabContainer && tabContainerPrevDisplay !== null) {
+      tabContainer.style.display = tabContainerPrevDisplay || 'flex';
+    }
+    if (button) {
+      button.innerHTML = button.dataset.originalText || '📄 PDF İndir';
+      button.disabled = false;
+      button.style.opacity = '1';
+      button.style.cursor = 'pointer';
+    }
+  } catch (err) {
+    console.error('PDF oluşturma hatası:', err);
+    alert('PDF oluşturulurken bir sorun oluştu. Konsolu kontrol edin.');
+  } finally {
+    // Hata olsa bile görünümü eski haline döndür
+    try {
+      const allTabs = document.querySelectorAll('.tab-content');
+      // Eğer üstte restore kaçarsa tekrar güvence altına al
+      allTabs.forEach(tab => tab.classList.contains('active') || (tab.style.display = 'none'));
+      const tabContainer = document.querySelector('.tab-container');
+      if (tabContainer && getComputedStyle(tabContainer).display === 'none') {
+        tabContainer.style.display = 'flex';
+      }
+      const button = document.querySelector('.pdf-button');
+      if (button) {
+        button.innerHTML = button.dataset.originalText || '📄 PDF İndir';
+        button.disabled = false;
+        button.style.opacity = '1';
+        button.style.cursor = 'pointer';
+      }
+    } catch(e){}
+  }
+}
 </script>
 
 </body>

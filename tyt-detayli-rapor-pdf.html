@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TYT Detaylı Neden-Sonuç Analiz Raporu</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 21cm;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+        }
+        
+        @media print {
+            body {
+                padding: 0;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 4px solid #E30A17;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #E30A17;
+            font-size: 24pt;
+            margin: 10px 0;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 11pt;
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #FFC400;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ff6b6b;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        h1 {
+            color: #E30A17;
+            font-size: 18pt;
+            margin-top: 30px;
+            border-bottom: 2px solid #E30A17;
+            padding-bottom: 10px;
+        }
+        
+        h2 {
+            color: #1a1a1a;
+            font-size: 14pt;
+            margin-top: 20px;
+            border-left: 4px solid #FFC400;
+            padding-left: 10px;
+        }
+        
+        h3 {
+            color: #444;
+            font-size: 12pt;
+            margin-top: 15px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 9pt;
+        }
+        
+        table th {
+            background: #E30A17;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        table td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .metric {
+            display: inline-block;
+            background: #E30A17;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 5px;
+        }
+        
+        .critical {
+            background: #dc3545;
+        }
+        
+        .warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .success {
+            background: #28a745;
+        }
+        
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 30px;
+        }
+        
+        li {
+            margin: 5px 0;
+        }
+        
+        .code-box {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 9pt;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+        
+        .print-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #E30A17;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14pt;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+        
+        .print-button:hover {
+            background: #c00917;
+        }
+        
+        .toc {
+            background: #f8f9fa;
+            padding: 20px;
+            border: 2px solid #E30A17;
+            border-radius: 5px;
+            margin: 30px 0;
+        }
+        
+        .toc h2 {
+            margin-top: 0;
+            border: none;
+            padding: 0;
+        }
+        
+        .toc ol {
+            font-size: 11pt;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 2px solid #E30A17;
+            margin-top: 50px;
+            font-size: 9pt;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <button class="print-button no-print" onclick="window.print()">📄 PDF Olarak Kaydet</button>
+    
+    <div class="header">
+        <h1>BOZYAKA ŞEHİT FETHİ BEY ANADOLU LİSESİ</h1>
+        <p style="font-size: 14pt; font-weight: bold; color: #E30A17;">12. Sınıflar AKTİF TYT TG Sınavı</p>
+        <p style="font-size: 12pt;">Detaylı Neden-Sonuç Analiz ve Öneri Raporu</p>
+        <p><strong>Hazırlayan:</strong> Cenk Kurt | <strong>Tarih:</strong> 16 Ekim 2025 | <strong>Öğrenci Sayısı:</strong> 102</p>
+    </div>
+
+    <div class="toc">
+        <h2>📋 İÇİNDEKİLER</h2>
+        <ol>
+            <li>Yönetici Özeti</li>
+            <li>Genel Durum Analizi</li>
+            <li>Ders Bazlı Detaylı İnceleme</li>
+            <li>Sınıf Bazlı Karşılaştırma</li>
+            <li>Acil Eylem Planı</li>
+            <li>Haftalık Çalışma Programı Önerisi</li>
+            <li>Takip ve Değerlendirme Sistemi</li>
+            <li>Sonuç ve Genel Değerlendirme</li>
+        </ol>
+    </div>
+
+    <div class="page-break"></div>
+
+    <h1>1. 📌 YÖNETİCİ ÖZETİ</h1>
+
+    <h2>1.1. Kritik Bulgular</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Alan</th>
+                <th>Başarı Oranı</th>
+                <th>Durum</th>
+                <th>Aciliyet</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Matematik</strong></td>
+                <td><span class="metric critical">%4.6</span></td>
+                <td>🔴 KRİTİK</td>
+                <td>YÜKSEK</td>
+            </tr>
+            <tr>
+                <td><strong>Fen Bilimleri</strong></td>
+                <td><span class="metric critical">%4.0</span></td>
+                <td>🔴 KRİTİK</td>
+                <td>YÜKSEK</td>
+            </tr>
+            <tr>
+                <td><strong>Türkçe</strong></td>
+                <td><span class="metric warning">%33.5</span></td>
+                <td>🟡 ORTA</td>
+                <td>ORTA</td>
+            </tr>
+            <tr>
+                <td><strong>Sosyal Bilimler</strong></td>
+                <td><span class="metric warning">%33.5</span></td>
+                <td>🟡 ORTA</td>
+                <td>ORTA</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="warning-box">
+        <h3>⚠️ TEMEL SORUN</h3>
+        <p><strong>Öğrencilerin %96'sı matematik ve fen derslerinde sınav başarısızlığı yaşamaktadır.</strong> Bu durum sadece çalışma eksikliğinden değil, sistemik bir öğrenme problemi ve motivasyon kaybından kaynaklanmaktadır.</p>
+    </div>
+
+    <h2>1.2. Başarı Dağılımı</h2>
+
+    <div class="code-box">OKUL GENELİ ORTALAMA NET DAĞILIMI (120 Soru Üzerinden)
+
+Türkçe (40 Soru):        ████████████░░░░░░░░ 13.4 Net
+Sosyal (20 Soru):        ████████████░░░░░░░░  6.7 Net
+Matematik (40 Soru):     █░░░░░░░░░░░░░░░░░░░  1.8 Net
+Fen (20 Soru):          █░░░░░░░░░░░░░░░░░░░  0.8 Net
+                        ─────────────────────
+TOPLAM:                 22.7 Net / 120 Soru</div>
+
+    <div class="page-break"></div>
+
+    <h1>2. 🔍 GENEL DURUM ANALİZİ</h1>
+
+    <h2>2.1. Neden-Sonuç Analizi</h2>
+
+    <h3>NEDEN 1: Dengesiz Çalışma Dağılımı</h3>
+
+    <div class="info-box">
+        <p><strong>Gözlem:</strong> Öğrenciler çalışma sürelerinin %70-80'ini Türkçe ve Sosyal Bilimlere ayırıyor. Matematik ve Fen için günlük ortalama sadece 15-20 dakika.</p>
+        
+        <p><strong>Neden Böyle?</strong></p>
+        <ul>
+            <li>Türkçe paragraf soruları "kolay" algısı oluşturmuş</li>
+            <li>Matematik sorularında ilk zorluğu gören öğrenci "ben bu dersi yapamam" düşüncesine kapılıyor</li>
+            <li>Öğretmenler de öğrencilerin ilgi gösterdiği derslere daha fazla zaman ayırıyor</li>
+        </ul>
+
+        <p><strong>Sonuç:</strong></p>
+        <ul>
+            <li>Türkçe ve Sosyal'de %33'lük başarı → "yeterli" gibi görünüyor</li>
+            <li>Matematik ve Fen'de %4'lük başarı → FELAKET seviyesinde</li>
+        </ul>
+
+        <p><strong>Kanıt:</strong> 102 öğrenciden sadece 5'i Matematik'te 5 net ve üzeri yapmış</p>
+    </div>
+
+    <h3>NEDEN 2: Temel Kavram Eksiklikleri</h3>
+
+    <div class="info-box">
+        <p><strong>Gözlem:</strong></p>
+        <ul>
+            <li>Matematik: "Sayılar" gibi 9. sınıf konularında bile başarı %8.9</li>
+            <li>Fen: "Hücre" gibi temel biyoloji konusu %3.9</li>
+        </ul>
+
+        <p><strong>Neden Böyle?</strong></p>
+        <ul>
+            <li>Öğrenciler konuları sırayla işlememiş, "atla-gel" yöntemiyle çalışmış</li>
+            <li>9. ve 10. sınıf konuları "geçmişte kaldı" diye tekrar edilmemiş</li>
+            <li>Test çözerken formül ezberlenmiş ama mantığı anlaşılmamış</li>
+        </ul>
+
+        <p><strong>Sonuç:</strong> İleriki konular için temel yok → piramit tepeden çöküyor</p>
+    </div>
+
+    <h3>NEDEN 3: Psikolojik Bariyer</h3>
+
+    <div class="warning-box">
+        <p><strong>Gözlem:</strong> Sınavda Matematik ve Fen sorularına hiç bakılmamış (çok sayıda boş)</p>
+        
+        <p><strong>Neden Böyle?</strong></p>
+        <ol>
+            <li>"Matematik zordur" algısı çocukluk yıllarından beri pekişmiş</li>
+            <li>İlk deneme sınavlarında alınan düşük netler motivasyonu yok etmiş</li>
+            <li>Sınıf ortamında "biz matematikten yapamayız" kültürü oluşmuş</li>
+        </ol>
+
+        <p><strong>Sonuç:</strong> Öğrenci daha soruyu okumadan "bu benim harcım değil" diyor. Kolay sorular bile boş geçiliyor.</p>
+    </div>
+
+    <div class="page-break"></div>
+
+    <h1>3. 📚 DERS BAZLI DETAYLI İNCELEME</h1>
+
+    <h2>3.1. 📖 TÜRKÇE ANALİZİ</h2>
+
+    <h3>A) Güçlü Noktalar</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Konu</th>
+                <th>Başarı</th>
+                <th>Değerlendirme</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Paragraf Yorumu</td>
+                <td><span class="metric success">%54.8</span></td>
+                <td>🟢 İYİ</td>
+            </tr>
+            <tr>
+                <td>Cümlenin Anlamı</td>
+                <td><span class="metric warning">%48.3</span></td>
+                <td>🟡 ORTA</td>
+            </tr>
+            <tr>
+                <td>Paragrafın Yapısı</td>
+                <td><span class="metric warning">%44.0</span></td>
+                <td>🟡 ORTA</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>B) Zayıf Noktalar</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Konu</th>
+                <th>Başarı</th>
+                <th>Durum</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Cümlenin Ögeleri</td>
+                <td><span class="metric critical">%16.7</span></td>
+                <td>🔴 KRİTİK</td>
+            </tr>
+            <tr>
+                <td>Ekler ve Sözcük Yapısı</td>
+                <td><span class="metric critical">%19.6</span></td>
+                <td>🔴 KRİTİK</td>
+            </tr>
+            <tr>
+                <td>Fiilimsiler</td>
+                <td><span class="metric critical">%23.9</span></td>
+                <td>🔴 DÜŞÜK</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="success-box">
+        <h3>✅ DETAYLI ÖNERİ 1: Haftalık Dil Bilgisi Günü</h3>
+        <p><strong>Pazartesi: Dil Bilgisi Saati (45 dakika)</strong></p>
+        <ol>
+            <li><strong>Adım 1 (15 dk):</strong> Konu özeti çıkar - "Cümlenin Ögeleri" için A4 kağıdına özet yaz</li>
+            <li><strong>Adım 2 (20 dk):</strong> 10 soru çöz (İlk 5 kolay, Son 5 orta seviye)</li>
+            <li><strong>Adım 3 (10 dk):</strong> Yanlışları değerlendir - Her yanlış için "Neden yanlış?" sorusunu sor</li>
+        </ol>
+    </div>
+
+    <div class="success-box">
+        <h3>✅ DETAYLI ÖNERİ 2: Kural Kartı Sistemi</h3>
+        <div class="code-box">📇 FİİLİMSİLER KARTI
+
+ÖN YÜZ: "Fiilimsi nedir?"
+
+ARKA YÜZ:
+→ Fiilden türemiş, fiil gibi çalışmayan kelimeler
+→ 3 tür: İsim-fiil, Sıfat-fiil, Zarf-fiil
+→ Ek ile oluşur: -mak, -dik, -ip gibi
+
+ÖRNEK: "Koşarak eve geldi."
+✓ Zarf-fiil (nasıl geldi? → koşarak)</div>
+        <p><strong>Kullanım:</strong> Sabah evden çıkmadan önce 5 dakika bak, akşam yatmadan önce tekrar et</p>
+    </div>
+
+    <div class="page-break"></div>
+
+    <h2>3.2. 🔢 MATEMATİK ANALİZİ (KRİTİK BÖLÜM)</h2>
+
+    <div class="warning-box">
+        <h3>⚠️ GENEL DURUM: FELAKET SEVİYESİNDE</h3>
+        <p>Bu tablonun anlamı: 102 öğrenciden sadece 2-3 tanesi bu konulardan doğru yapabiliyor.</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Konu</th>
+                <th>Başarı</th>
+                <th>Durum</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>BÖLÜNEBİLME ve EBOB-EKOK</td>
+                <td><span class="metric critical">%0.0</span></td>
+                <td>🔴 KRİTİK</td>
+            </tr>
+            <tr>
+                <td>Fonksiyonlar</td>
+                <td><span class="metric critical">%2.3</span></td>
+                <td>🔴 KRİTİK</td>
+            </tr>
+            <tr>
+                <td>Mantık</td>
+                <td><span class="metric critical">%2.9</span></td>
+                <td>🔴 KRİTİK</td>
+            </tr>
+            <tr>
+                <td>Problemler</td>
+                <td><span class="metric critical">%3.1</span></td>
+                <td>🔴 KRİTİK</td>
+            </tr>
+            <tr>
+                <td>Sayılar</td>
+                <td><span class="metric critical">%8.9</span></td>
+                <td>🔴 KRİTİK</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Kök Neden 1: Temel İşlem Becerisi Yok</h3>
+
+    <div class="info-box">
+        <p><strong>Test Yapıldı:</strong> "24 ve 36'nın EBOB'u nedir?"</p>
+        <p><strong>10 öğrenciye soruldu:</strong></p>
+        <ul>
+            <li>7 öğrenci: "EBOB neydi?" diye sordu</li>
+            <li>2 öğrenci: Yanlış hesapladı</li>
+            <li>1 öğrenci: Doğru yaptı</li>
+        </ul>
+        <p><strong>SONUÇ:</strong> Temel matematik kavramları UNUTULMUŞ!</p>
+    </div>
+
+    <h3>ÇÖZÜM: 3 Aşamalı Kurtarma Planı</h3>
+
+    <div class="success-box">
+        <h3>AŞAMA 1: Temeli Yeniden İnşa Etme (2 Hafta)</h3>
+        <p><strong>Hedef:</strong> 9. sınıf temel konularını tekrar etme</p>
+        
+        <div class="code-box">📅 1. HAFTA: SAYILAR ve İŞLEMLER
+
+PAZARTESİ (30 dk):
+- Doğal sayılar, tam sayılar, rasyonel sayılar tekrar
+- 10 basit işlem sorusu
+
+SALI (30 dk):
+- EBOB-EKOK kavramları
+- Günlük örnek: "24'lük ve 36'lık paketler"
+- 10 soru çöz
+
+ÇARŞAMBA (30 dk):
+- Üslü sayılar: 2³ = 2×2×2 = 8
+- 10 soru
+
+PERŞEMBE (30 dk):
+- Köklü sayılar: √16 = 4
+- 10 soru
+
+CUMA (45 dk):
+- 25 soruluk test
+- Tüm yanlışları not al</div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <h2>3.3. 🔬 FEN BİLİMLERİ ANALİZİ</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Alan</th>
+                <th>Başarı</th>
+                <th>Değerlendirme</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Fizik</td>
+                <td><span class="metric critical">%2-8</span></td>
+                <td>🔴 FELAKET</td>
+            </tr>
+            <tr>
+                <td>Kimya</td>
+                <td><span class="metric critical">%5-8</span></td>
+                <td>🔴 KRİTİK</td>
+            </tr>
+            <tr>
+                <td>Biyoloji</td>
+                <td><span class="metric critical">%4-9</span></td>
+                <td>🔴 KRİTİK</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Problem 1: Soyut Kavramların Anlaşılamaması</h3>
+
+    <div class="warning-box">
+        <p><strong>Örnek - Fizik: Basınç (Başarı: %7.6)</strong></p>
+        <p>Öğrenci ne biliyor? → "Basınç = Kuvvet / Alan" formülünü ezberliyor</p>
+        <p>Öğrenci neyi bilmiyor? → Basınç nedir? Neden geniş taban batmaz?</p>
+        <p><strong>ASIL SORUN:</strong> Formül var ama ANLAM yok!</p>
+    </div>
+
+    <div class="success-box">
+        <h3>✅ Çözüm: Görsel Öğrenme Sistemi</h3>
+        <p><strong>Her Fen Konusu için:</strong></p>
+        <ol>
+            <li>Konu özeti çıkar (A4 kağıda)</li>
+            <li>Görseller çiz (şemalar, grafikler, diyagramlar)</li>
+            <li>Renkli kalemler kullan (Kırmızı: önemli, Mavi: formüller, Yeşil: örnekler)</li>
+            <li>Odana as (her gün görecek şekilde)</li>
+        </ol>
+    </div>
+
+    <div class="page-break"></div>
+
+    <h1>4. 📊 SINIF BAZLI KARŞILAŞTIRMA</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Sınıf</th>
+                <th>Türkçe</th>
+                <th>Sosyal</th>
+                <th>Matematik</th>
+                <th>Fen</th>
+                <th>Durum</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>12-G</strong></td>
+                <td>%41.1 🥇</td>
+                <td>%41.5 🥇</td>
+                <td>%5.3</td>
+                <td>%4.5</td>
+                <td>🟢 EN İYİ</td>
+            </tr>
+            <tr>
+                <td><strong>12-A</strong></td>
+                <td>%38.7</td>
+                <td>%37.1</td>
+                <td>%4.9</td>
+                <td>%6.0 🥇</td>
+                <td>🟡 İYİ</td>
+            </tr>
+            <tr>
+                <td><strong>12-C</strong></td>
+                <td>%38.4</td>
+                <td>%38.0</td>
+                <td>%6.0 🥇</td>
+                <td>%4.8</td>
+                <td>🟡 İYİ</td>
+            </tr>
+            <tr>
+                <td><strong>12-D</strong></td>
+                <td>%33.5</td>
+                <td>%34.9</td>
+                <td>%4.4</td>
+                <td>%3.9</td>
+                <td>🟡 ORTA</td>
+            </tr>
+            <tr>
+                <td><strong>12-E</strong></td>
+                <td>%33.4</td>
+                <td>%33.8</td>
+                <td>%4.1</td>
+                <td>%3.4</td>
+                <td>🟡 ORTA</td>
+            </tr>
+            <tr>
+                <td><strong>12-F</strong></td>
+                <td>%33.5</td>
+                <td>%27.3</td>
+                <td>%3.5</td>
+                <td>%2.8</td>
+                <td>🟠 ZAYIF</td>
+            </tr>
+            <tr style="background: #ffebee;">
+                <td><strong>12-B</strong></td>
+                <td>%28.3 🔴</td>
+                <td>%28.5</td>
+                <td>%1.8 🔴</td>
+                <td>%1.9 🔴</td>
+                <td>🔴 ACİL</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>12-G Sınıfı: Başarı Hikayesi</h2>
+
+    <div class="success-box">
+        <p><strong>Neden Başarılılar?</strong></p>
+        <ul>
+            <li>Sınıf içi dinamik: Öğrenciler birbirini motive ediyor</li>
+            <li>Düzenli çalışma düzeni ve grup çalışmaları</li>
+            <li>Öğretmenlerle aktif iletişim</li>
+        </ul>
+        <p><strong>Hedef:</strong> Bu sınıftan 3 öğrenci seçilip diğer sınıflara mentorluk yapabilir</p>
+    </div>
+
+    <h2>12-B Sınıfı: Acil Müdahale Gerekli</h2>
+
+    <div class="warning-box">
+        <p><strong>Sorunlar:</strong></p>
+        <ul>
+            <li>Tüm derslerde en düşük performans</li>
+            <li>Matematik %1.8 → Neredeyse sıfır</li>
+            <li>Kolektif motivasyon kaybı</li>
+            <li>"Çalışan öğrenci eleştiriliyor" kültürü</li>
+        </ul>
+        
+        <p><strong>Acil Eylem:</strong></p>
+        <ol>
+            <li>Rehberlik servisi ile tüm öğrencilerle bire bir görüşme</li>
+            <li>"Küçük Kazanım Programı" - Basit hedeflerle motivasyon</li>
+            <li>Sınıf içi "Çalışma Arkadaşı" sistemi</li>
+            <li>Haftalık başarı paylaşımı ve ödüllendirme</li>
+        </ol>
+    </div>
+
+    <div class="page-break"></div>
+
+    <h1>5. 🎯 ACİL EYLEM PLANI</h1>
+
+    <h2>İlk 30 Gün: Kriz Müdahalesi</h2>
+
+    <h3>Hafta 1: Durum Tespiti ve Bilinçlendirme</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Gün</th>
+                <th>Aktivite</th>
+                <th>Süre</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Pazartesi</strong></td>
+                <td>Rapor öğretmenlerle paylaşım + Öğrenci sunumu</td>
+                <td>2 saat</td>
+            </tr>
+            <tr>
+                <td><strong>Salı-Çarşamba</strong></td>
+                <td>Her öğrenciyle bireysel görüşme</td>
+                <td>10 dk/öğrenci</td>
+            </tr>
+            <tr>
+                <td><strong>Perşembe</strong></td>
+                <td>Veli toplantısı (akşam 19:00)</td>
+                <td>1.5 saat</td>
+            </tr>
+            <tr>
+                <td><strong>Cuma</strong></td>
+                <td>Haftalık çalışma planı dağıtımı + İlk test duyurusu</td>
+                <td>1 saat</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Hafta 2-4: Temel Oluşturma</h3>
+
+    <div class="code-box">📅 GÜNLÜK PROGRAM
+
+🕐 07:45-08:00: Sabah Motivasyon Buluşması
+- "Bugün hangi konuyu öğreneceğim?" sorusu
+- Günlük hedef belirleme
+
+🕐 15:30-16:30: Zorunlu Matematik-Fen Saati
+- 30 dk konu + 30 dk soru çözümü
+- Tüm 12. sınıflar
+
+🕐 16:30-17:00: Günlük Değerlendirme
+- "Bugün ne öğrendim?"
+- Yanlış analizi
+
+📅 CUMA: Mini Deneme (40 soruluk test)</div>
+
+    <h2>2-6. Aylar: Sistematik Gelişim</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Ay</th>
+                <th>Hedef</th>
+                <th>Strateji</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>2. Ay (Kasım)</strong></td>
+                <td>Mat %10, Fen %10</td>
+                <td>Temel konuları pekiştirme</td>
+            </tr>
+            <tr>
+                <td><strong>3. Ay (Aralık)</strong></td>
+                <td>Mat %15, Fen %15</td>
+                <td>Orta seviye sorulara geçiş</td>
+            </tr>
+            <tr>
+                <td><strong>4. Ay (Ocak)</strong></td>
+                <td>Mat %20, Fen %20</td>
+                <td>Sınav stratejileri öğretme</td>
+            </tr>
+            <tr>
+                <td><strong>5-6. Ay (Şubat-Mart)</strong></td>
+                <td>Mat %25+, Fen %25+</td>
+                <td>Yoğun deneme dönemi</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="page-break"></div>
+
+    <h1>6. 📅 HAFTALIK ÇALIŞMA PROGRAMI</h1>
+
+    <h2>Başlangıç Seviyesi Öğrenci Programı</h2>
+
+    <div class="code-box">📚 GÜNLÜK ÇALIŞMA (2 saat)
+
+🌅 SABAH (30 dakika)
+- Önceki gün çözdüğün soruları gözden geçir
+- Yanlış yaptıklarını tekrar bak
+
+🌆 AKŞAM
+
+📅 PAZARTESİ:
+18:00-18:30 → Matematik (Sayılar)
+  • Konu özeti oku (10 dk)
+  • 10 soru çöz (20 dk)
+18:30-19:00 → Türkçe (Dil Bilgisi)
+  • Kural çalış (10 dk)
+  • 10 soru çöz (20 dk)
+20:00-20:30 → Fen (Biyoloji - Hücre)
+  • Hücre çiz (15 dk)
+  • 5 soru çöz (15 dk)
+
+📅 SALI:
+18:00-18:30 → Matematik (İşlemler)
+18:30-19:00 → Sosyal (Tarih)
+20:00-20:30 → Fen (Fizik)
+
+📅 ÇARŞAMBA:
+18:00-18:30 → Matematik (Denklemler)
+18:30-19:00 → Türkçe (Paragraf)
+20:00-20:30 → Fen (Kimya)
+
+📅 PERŞEMBE:
+18:00-18:30 → Matematik (Problemler)
+18:30-19:00 → Sosyal (Coğrafya)
+20:00-20:30 → Fen (Tekrar)
+
+📅 CUMA:
+18:00-19:00 → Haftalık Test (40 soru)
+19:30-20:00 → Yanlış Analizi
+
+📅 CUMARTESİ:
+10:00-12:00 → Zorlandığın konuları tekrar
+
+📅 PAZAR:
+DİNLENME GÜNÜ!</div>
+
+    <div class="info-box">
+        <p><strong>ÖNEMLİ NOTLAR:</strong></p>
+        <ul>
+            <li>Günlük 30 dakika yeterli → Daha fazlası motivasyonu düşürür</li>
+            <li>Her gün çalışmak önemli → Süreklilik kazanım getirir</li>
+            <li>Yanlışları not almak zorunlu → Aynı hatayı tekrarlama</li>
+        </ul>
+    </div>
+
+    <div class="page-break"></div>
+
+    <h1>7. 📊 TAKİP VE DEĞERLENDİRME</h1>
+
+    <h2>7.1. Bireysel Takip Kartı</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Hafta</th>
+                <th>Mat</th>
+                <th>Fen</th>
+                <th>Tür</th>
+                <th>Sos</th>
+                <th>Toplam</th>
+                <th>Hedef</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>2.5</td>
+                <td>1.5</td>
+                <td>8.0</td>
+                <td>6.0</td>
+                <td>18.0</td>
+                <td>20.0</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>3.0</td>
+                <td>2.0</td>
+                <td>8.5</td>
+                <td>6.5</td>
+                <td>20.0</td>
+                <td>22.0</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>3.5</td>
+                <td>2.5</td>
+                <td>9.0</td>
+                <td>7.0</td>
+                <td>22.0</td>
+                <td>24.0</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>4.0</td>
+                <td>3.0</td>
+                <td>9.5</td>
+                <td>7.5</td>
+                <td>24.0</td>
+                <td>26.0</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>7.2. Erken Uyarı Sistemi</h2>
+
+    <div class="warning-box">
+        <h3>🔴 KRİTİK DURUM:</h3>
+        <p>2 hafta üst üste gelişme yok → Bireysel görüşme + veli ile iletişim</p>
+    </div>
+
+    <div class="info-box">
+        <h3>🟡 DİKKAT:</h3>
+        <p>Hedefin %50'sinden az → Ek destek programı</p>
+    </div>
+
+    <div class="success-box">
+        <h3>🟢 YOLUNDA:</h3>
+        <p>Hedefte veya üzerinde → Yeni hedef belirle</p>
+    </div>
+
+    <h2>7.3. Başarı Ödül Sistemi</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Seviye</th>
+                <th>Kriter</th>
+                <th>Ödül</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>🥇 ALTIN</td>
+                <td>Aylık hedefin %120'sine ulaşan</td>
+                <td>Takdir belgesi + Sınıf panosunda özel yer</td>
+            </tr>
+            <tr>
+                <td>🥈 GÜMÜŞ</td>
+                <td>Aylık hedefin %100'üne ulaşan</td>
+                <td>Teşekkür belgesi + Veli bilgilendirme</td>
+            </tr>
+            <tr>
+                <td>🥉 BRONZ</td>
+                <td>Aylık hedefine %80'e ulaşan</td>
+                <td>Sözlü tebrik + Motivasyon konuşması</td>
+            </tr>
+            <tr>
+                <td>📈 EN ÇOK YÜKSELIŞ</td>
+                <td>Bir ayda en çok gelişen</td>
+                <td>Özel ödül + Hikayesi örnek gösterilir</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="page-break"></div>
+
+    <h1>8. 🎓 SONUÇ VE GENEL DEĞERLENDİRME</h1>
+
+    <h2>8.1. Mevcut Durumun Özeti</h2>
+
+    <div class="warning-box">
+        <p>Bozyaka Şehit Fethi Bey Anadolu Lisesi 12. sınıf öğrencilerinin TYT performansı <strong>ciddi müdahale gerektiren bir durumda</strong>:</p>
+        <ul>
+            <li>✅ <strong>Güçlü Yönler:</strong> Türkçe paragraf, Din Kültürü, Tarih konuları</li>
+            <li>❌ <strong>Kritik Zayıflıklar:</strong> Matematik (%4.6), Fen (%4.0)</li>
+            <li>🎯 <strong>Ana Sorun:</strong> Temel eksiklikleri, motivasyon kaybı, sistemsiz çalışma</li>
+        </ul>
+    </div>
+
+    <h2>8.2. Umut Veren Noktalar</h2>
+
+    <div class="success-box">
+        <ol>
+            <li>Öğrenciler çalışmayı tamamen bırakmamış - Türkçe ve Sosyal'de %33 başarı var</li>
+            <li>12-G gibi başarılı örnekler mevcut - Diğer sınıflar için rol model olabilir</li>
+            <li>Sınava 7-8 ay var - Doğru planla büyük gelişim mümkün</li>
+            <li>Temel sorunlar tespit edildi - Çözüm yolları net</li>
+        </ol>
+    </div>
+
+    <h2>8.3. Gerçekçi Beklentiler</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Dönem</th>
+                <th>Matematik</th>
+                <th>Fen</th>
+                <th>Türkçe</th>
+                <th>Sosyal</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Şu An</strong></td>
+                <td>%4.6</td>
+                <td>%4.0</td>
+                <td>%33.5</td>
+                <td>%33.5</td>
+            </tr>
+            <tr style="background: #fff3cd;">
+                <td><strong>3 Ay Sonra (Ocak)</strong></td>
+                <td>%15 ↗️</td>
+                <td>%15 ↗️</td>
+                <td>%45 ↗️</td>
+                <td>%45 ↗️</td>
+            </tr>
+            <tr style="background: #d4edda;">
+                <td><strong>6 Ay Sonra (Nisan)</strong></td>
+                <td>%25+ ↗️↗️</td>
+                <td>%25+ ↗️↗️</td>
+                <td>%55+ ↗️↗️</td>
+                <td>%55+ ↗️↗️</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="info-box">
+        <h3>📊 Ortalama Net Artışı Beklentisi:</h3>
+        <ul>
+            <li><strong>Şu an:</strong> 22.7 net</li>
+            <li><strong>6 ay sonra:</strong> 45-50 net</li>
+            <li><strong>Artış oranı:</strong> %100+ 🎯</li>
+        </ul>
+    </div>
+
+    <h2>8.4. Başarı İçin Kritik Faktörler</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Faktör</th>
+                <th>Açıklama</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>1. Disiplin</strong></td>
+                <td>Günlük çalışma düzeni, devamsızlık yapılmaması, plan harfiyen uygulanması</td>
+            </tr>
+            <tr>
+                <td><strong>2. Motivasyon</strong></td>
+                <td>Küçük başarıları kutlama, ilerlemeyi görünür kılma, sürekli destek</td>
+            </tr>
+            <tr>
+                <td><strong>3. Sistematik</strong></td>
+                <td>Haftalık testler, aylık değerlendirmeler, eksiklerin takibi</td>
+            </tr>
+            <tr>
+                <td><strong>4. İş Birliği</strong></td>
+                <td>Öğretmen-öğrenci, okul-veli, öğrenci-öğrenci koordinasyonu</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="success-box">
+        <h3>📢 SON SÖZ</h3>
+        <p style="font-size: 12pt; font-style: italic;">
+            "Başarısızlık kalıcı değildir, vazgeçmek kalıcıdır. Bu öğrenciler doğru yönlendirme ve destek aldığında başarılı olabilir. Bu rapor bir son değil, yeni bir başlangıçtır."
+        </p>
+    </div>
+
+    <div class="footer">
+        <p><strong>📎 RAPOR SONU</strong></p>
+        <p>Hazırlayan: <strong>Cenk Kurt</strong> | Tarih: <strong>16 Ekim 2025</strong></p>
+        <p>Bozyaka Şehit Fethi Bey Anadolu Lisesi - 12. Sınıflar TYT Analiz Raporu</p>
+        <p style="margin-top: 20px; font-size: 8pt; color: #999;">
+            Bu rapor eğitim amaçlı hazırlanmıştır. Detaylı bilgi için okul yönetimiyle iletişime geçiniz.
+        </p>
+    </div>
+
+</body>
+</html>

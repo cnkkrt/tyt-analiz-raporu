@@ -1,0 +1,1 @@
+# tyt-analiz-raporu
